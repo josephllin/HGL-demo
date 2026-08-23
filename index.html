@@ -204,7 +204,7 @@
     <div class="stamp">
       SCHEME <b>Bald Hill Reservoir → Town</b><br>
       MAIN <b>5 000 m</b> · TWL <b>120.00 m AHD</b><br>
-      METHOD <b>Darcy–Weisbach / Colebrook–White</b><br>MIN. RESIDUAL <b>20 m</b> · WATER AT <b>15 °C</b>
+      METHOD <b>Darcy–Weisbach / Colebrook–White</b><br>MIN. RESIDUAL <b>15 m</b> · WATER AT <b>15 °C</b>
     </div>
   </div>
 
@@ -308,7 +308,7 @@
 const L      = 5000;      // main length, m
 const TWL    = 120;       // top water level, m AHD
 const COVER  = 2.0;       // pipe centreline below surface, m
-const MINRES = 20;        // minimum residual head, m
+const MINRES = 15;        // minimum residual head, m
 const G      = 9.81;
 
 const PROFILE = [
@@ -796,14 +796,14 @@ function updatePanel(S){
     a.innerHTML = `The HGL has fallen <b>below the pipe</b>. Gravity cannot deliver ${Q_LPS} L/s through DN${DN} at k = ${KS} mm — upsize the main or reduce the flow.`;
   } else if (!worst.ok){
     a.className = 'alertbar';
-    a.innerHTML = `<b>${worst.name}</b> is down to ${worst.residual.toFixed(1)} m (${Math.round(worst.kpa)} kPa) — below the 20 m minimum.`;
+    a.innerHTML = `<b>${worst.name}</b> is down to ${worst.residual.toFixed(1)} m (${Math.round(worst.kpa)} kPa) — below the 15 m minimum.`;
   } else {
     a.className = 'alertbar clear';
     a.innerHTML = `All offtakes compliant. <b>${worst.name}</b> governs at ${worst.residual.toFixed(1)} m residual.`;
   }
 
   el('capacity').innerHTML =
-    `Gravity capacity of DN${DN} at k = ${KS} mm, holding 20 m everywhere: <b>${S.cap.q.toFixed(0)} L/s</b>. ` +
+    `Gravity capacity of DN${DN} at k = ${KS} mm, holding 15 m everywhere: <b>${S.cap.q.toFixed(0)} L/s</b>. ` +
     `The governing point is <b>${S.cap.gov}</b> — note it is not always the far end of the main.`;
 }
 

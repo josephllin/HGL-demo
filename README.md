@@ -31,7 +31,7 @@ Sweep flow ramps the flow from zero to full and animates the grade line falling 
 | Main length | 5,000 m |
 | Top water level | 120.00 m AHD |
 | Method | Darcy-Weisbach with Colebrook-White |
-| Minimum residual | 20 m |
+| Minimum residual | 15 m |
 | Water temperature | 15 C |
 
 Offtakes: Upper Vale at ch 1600, surface 84.0 m. Knoll Rise at ch 3600, surface 80.0 m. Town Reticulation at ch 5000, surface 44.0 m.

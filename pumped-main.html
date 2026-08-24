@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pumped Main — Rising Main to Cloud 9 Reservoir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --ink:#16232B;
+    --ink-2:#425A66;
+    --ink-3:#7C919B;
+    --field:#E5EBED;
+    --panel:#F4F8F9;
+    --line:#C0CDD2;
+    --hydro:#0B7F9E;
+    --hydro-bright:#17B6D9;
+    --hydro-wash:#17B6D9;
+    --earth:#B08454;
+    --earth-dark:#7E5B36;
+    --alarm:#B32636;
+    --ok:#2E7D5B;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --cond:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
+    --body:'Barlow',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--field);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:15px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{max-width:1460px;margin:0 auto;padding:18px 18px 40px}
+
+  /* ---------- title block (drawing-sheet vernacular) ---------- */
+  .titleblock{
+    display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px;
+    border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:16px;
+  }
+  .titleblock h1{
+    font-family:var(--cond);font-weight:700;text-transform:uppercase;
+    font-size:clamp(26px,4.4vw,44px);letter-spacing:.012em;line-height:.95;margin:0;
+  }
+  .titleblock h1 em{font-style:normal;color:var(--hydro)}
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 6px;
+  }
+  .stamp{
+    margin-left:auto;font-family:var(--mono);font-size:11px;line-height:1.7;
+    color:var(--ink-2);text-align:right;letter-spacing:.02em;
+  }
+  .stamp b{font-weight:600;color:var(--ink)}
+
+  /* ---------- layout ---------- */
+  .grid{display:grid;grid-template-columns:1fr 316px;gap:16px;align-items:start}
+  @media (max-width:1000px){.grid{grid-template-columns:1fr}}
+
+  .frame{
+    background:var(--panel);border:1px solid var(--line);position:relative;
+  }
+  .frame > .tag{
+    position:absolute;top:0;left:0;z-index:4;
+    font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--panel);background:var(--ink);padding:4px 9px;
+  }
+
+  #scene{width:100%;height:min(46vh,420px);min-height:280px;display:block}
+  .scenewrap{position:relative;overflow:hidden;margin-bottom:14px}
+  #labels{position:absolute;inset:0;pointer-events:none}
+  .lab{
+    position:absolute;transform:translate(-50%,-100%);white-space:nowrap;
+    font-family:var(--mono);font-size:11px;letter-spacing:.03em;
+    background:rgba(244,248,249,.88);border:1px solid var(--line);
+    padding:2px 6px;color:var(--ink);
+  }
+  .lab.water{color:var(--hydro);border-color:#9FD3E2}
+  .lab.bad{color:var(--alarm);border-color:#E3B4BA}
+  .vex{
+    position:absolute;right:8px;bottom:7px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  }
+  .hint{
+    position:absolute;left:9px;bottom:7px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  }
+
+  #section{width:100%;height:auto;display:block}
+
+  /* ---------- controls ---------- */
+  .panel{background:var(--panel);border:1px solid var(--line);padding:14px 14px 16px}
+  .panel + .panel{margin-top:14px}
+  .plabel{
+    font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line);
+  }
+  .ctl{margin-bottom:16px}
+  .ctl:last-child{margin-bottom:0}
+  .ctl-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:5px}
+  .ctl-head span{
+    font-family:var(--cond);font-weight:600;text-transform:uppercase;
+    letter-spacing:.06em;font-size:14px;color:var(--ink-2);
+  }
+  .ctl-head b{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink)}
+  .ctl-head b i{font-style:normal;font-size:11px;color:var(--ink-3);font-weight:400}
+
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;cursor:pointer;margin:0;
+  }
+  input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line)}
+  input[type=range]::-moz-range-track{height:4px;background:var(--line)}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:15px;height:22px;background:var(--hydro);
+    border:0;border-radius:1px;margin-top:-9px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:15px;height:22px;background:var(--hydro);border:0;border-radius:1px;
+  }
+  input[type=range]:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+  .seg{display:flex;flex-wrap:wrap;gap:4px}
+  .seg button{
+    flex:1 1 auto;min-width:52px;font-family:var(--mono);font-size:12px;
+    padding:6px 4px;background:transparent;border:1px solid var(--line);
+    color:var(--ink-2);cursor:pointer;transition:background .12s,color .12s,border-color .12s;
+  }
+  .seg button:hover{border-color:var(--ink-3)}
+  .seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+  .seg button:focus-visible{outline:2px solid var(--hydro);outline-offset:2px}
+  .seg small{display:block;font-size:9px;letter-spacing:.04em;opacity:.7;font-family:var(--body)}
+
+  .actions{display:flex;gap:6px;margin-top:2px}
+  .actions button{
+    flex:1;font-family:var(--cond);font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+    font-size:14px;padding:9px 6px;border:1px solid var(--ink);background:var(--ink);color:var(--panel);
+    cursor:pointer;
+  }
+  .actions button.ghost{background:transparent;color:var(--ink)}
+  .actions button:focus-visible{outline:2px solid var(--hydro);outline-offset:2px}
+
+  .toggles{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+  .toggles label{
+    display:flex;align-items:center;gap:8px;font-family:var(--cond);font-size:14px;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);cursor:pointer;
+  }
+  .toggles input{accent-color:var(--hydro);width:15px;height:15px;margin:0}
+
+  /* ---------- readouts ---------- */
+  .readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .ro{background:var(--panel);padding:9px 10px}
+  .ro dt{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 2px;
+  }
+  .ro dd{margin:0;font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:-.01em}
+  .ro dd i{font-style:normal;font-size:11px;color:var(--ink-3);font-weight:400;margin-left:2px}
+
+  table{width:100%;border-collapse:collapse;margin-top:4px}
+  th,td{text-align:right;padding:6px 5px;font-family:var(--mono);font-size:12px;border-bottom:1px solid var(--line)}
+  th{
+    font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+    font-weight:500;border-bottom:1px solid var(--ink);
+  }
+  td:first-child,th:first-child{text-align:left;font-family:var(--body);font-size:13px}
+  tr.fail td{color:var(--alarm)}
+  tr.fail td:first-child{font-weight:600}
+  .chip{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+
+  .alertbar{
+    margin-top:12px;padding:9px 11px;border-left:3px solid var(--alarm);
+    background:#F7E7E9;font-size:13.5px;line-height:1.4;color:#5E1520;
+  }
+  .alertbar.clear{border-left-color:var(--ok);background:#E4F1EA;color:#1D4E39}
+  .alertbar b{font-weight:600}
+
+  .note{
+    font-size:12.5px;line-height:1.5;color:var(--ink-2);margin:12px 0 0;
+    padding-top:10px;border-top:1px solid var(--line);
+  }
+  .note code{font-family:var(--mono);font-size:11.5px;background:#E5EBED;padding:1px 4px}
+
+  footer{
+    margin-top:22px;padding-top:12px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:11px;color:var(--ink-3);line-height:1.7;letter-spacing:.02em;
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div>
+      <p class='eyebrow'>Water supply training · Sheet 02 of 02 · <a href='./' style='color:inherit'>&larr; gravity main</a></p>
+      <h1>Pumped main —<br><em>rising main to cloud 9</em></h1>
+    </div>
+    <div class="stamp">
+      SCHEME <b>Lake Wombat TP → Cloud 9 Reservoir → Snow Town</b><br>
+      CORRIDOR <b>6 000 m</b> · TWL <b>120.00 m AHD</b> · TP <b>20.00 m AHD</b><br>
+      METHOD <b>Darcy–Weisbach / Colebrook–White</b><br>MIN. RESIDUAL <b>15 m</b> · PUMP SET <b>75 % efficient</b> · WATER AT <b>15 °C</b>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="frame scenewrap">
+        <span class="tag">Isometric — grade surface &amp; piezometers</span>
+        <canvas id="scene"></canvas>
+        <div id="labels"></div>
+        <span class="hint">Drag to orbit · scroll to zoom</span>
+        <span class="vex" id="vexlabel">Vertical exaggeration 8×</span>
+      </div>
+
+      <div class="frame">
+        <span class='tag'>Long section — CH 0 to CH 6000</span>
+        <svg id="section" viewBox='0 0 1000 440' role="img" aria-label="Long section showing ground profile, pipeline, and hydraulic grade line"></svg>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <p class="plabel">Operating condition</p>
+
+        <div class="ctl">
+          <div class='ctl-head'><span>Falls Creek Village</span><b id='q0Out'>0<i>L/s</i></b></div>
+          <input id='q0' type='range' min='0' max='120' step='1' value='0' aria-label='Draw-off at Falls Creek Village, litres per second'>
+        </div>
+
+        <div class='ctl'>
+          <div class='ctl-head'><span>Mount Hotham</span><b id='q1Out'>0<i>L/s</i></b></div>
+          <input id='q1' type='range' min='0' max='120' step='1' value='0' aria-label='Draw-off at Mount Hotham, litres per second'>
+        </div>
+
+        <div class='ctl'>
+          <div class='ctl-head'><span>Snow Town</span><b id='q2Out'>0<i>L/s</i></b></div>
+          <input id='q2' type='range' min='0' max='120' step='1' value='0' aria-label='Draw-off at Snow Town, litres per second'>
+        </div>
+
+        <div class='ctl'>
+          <div class='ctl-head'><span>Total into main</span><b id='qTotOut'>0<i>L/s</i></b></div>
+        </div>
+
+        <div class='ctl'>
+          <div class='ctl-head'><span>Pump flow · Lake Wombat</span><b id='qpOut'>0<i>L/s</i></b></div>
+          <input id='qp' type='range' min='0' max='150' step='1' value='0' aria-label='Pump flow from Lake Wombat Treatment Plant, litres per second'>
+        </div>
+
+        <div class="ctl">
+          <div class="ctl-head"><span>Pipe size</span><b id="dOut">DN300</b></div>
+          <div class="seg" id="dSeg" role="group" aria-label="Nominal pipe diameter">
+            <button data-d="200">DN200</button>
+            <button data-d="250">DN250</button>
+            <button data-d="300" aria-pressed="true">DN300</button>
+            <button data-d="375">DN375</button>
+            <button data-d="450">DN450</button>
+          </div>
+        </div>
+
+        <div class="ctl">
+          <div class="ctl-head"><span>Wall roughness</span><b id="cOut">k = 0.06 mm</b></div>
+          <div class="seg" id="cSeg" role="group" aria-label="Absolute wall roughness in millimetres">
+            <button data-k="0.015">0.015<small>New PE / GRP</small></button>
+            <button data-k="0.06" aria-pressed="true">0.06<small>New DICL, cement lined</small></button>
+            <button data-k="0.30">0.30<small>Aged, light tuberculation</small></button>
+            <button data-k="1.50">1.50<small>Old CI, tuberculated</small></button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="sweep">Sweep flow</button>
+          <button id="reset" class="ghost">Reset</button>
+        </div>
+
+        <div class="toggles">
+          <label><input type="checkbox" id="tStatic" checked> Show static HGL (zero flow)</label>
+          <label><input type="checkbox" id="tBand" checked> Shade available pressure head</label>
+          <label><input type="checkbox" id="tEgl"> Show energy grade line</label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="plabel">Hydraulics — reach 1</p>
+        <dl class="readouts">
+          <div class="ro"><dt>Velocity</dt><dd id="roV">0.00<i>m/s</i></dd></div>
+          <div class="ro"><dt>Reynolds number</dt><dd id="roRe">—</dd></div>
+          <div class="ro"><dt>Friction factor f</dt><dd id="roF">—</dd></div>
+          <div class="ro"><dt>Relative roughness</dt><dd id="roK">—</dd></div>
+          <div class="ro"><dt>Friction slope</dt><dd id="roS">0.00<i>m/km</i></dd></div>
+          <div class="ro"><dt>Total head loss</dt><dd id="roH">0.00<i>m</i></dd></div>
+          <div class="ro"><dt>Velocity head</dt><dd id="roVh">0.00<i>m</i></dd></div>
+          <div class="ro"><dt>Flow regime</dt><dd id="roReg">Static</dd></div>
+        </dl>
+        <table>
+          <thead><tr><th>Reach</th><th>Flow L/s</th><th>v m/s</th><th>m/km</th><th>Loss m</th></tr></thead>
+          <tbody id='rbody'></tbody>
+        </table>
+        <div class='alertbar clear' id='alert'>Static condition — no flow, no friction loss.</div>
+      </div>
+
+      <div class='panel'>
+        <p class='plabel'>Pump duty — rising main</p>
+        <dl class='readouts'>
+          <div class='ro'><dt>Static lift</dt><dd id='puLift'>100.0<i>m</i></dd></div>
+          <div class='ro'><dt>Friction head</dt><dd id='puHf'>0.00<i>m</i></dd></div>
+          <div class='ro'><dt>Total dynamic head</dt><dd id='puTdh'>100.0<i>m</i></dd></div>
+          <div class='ro'><dt>Velocity in main</dt><dd id='puV'>0.00<i>m/s</i></dd></div>
+          <div class='ro'><dt>Shaft power</dt><dd id='puKw'>0<i>kW</i></dd></div>
+          <div class='ro'><dt>Specific energy</dt><dd id='puKwh'>—</dd></div>
+        </dl>
+        <div class='alertbar clear' id='balance'>Pump idle.</div>
+      </div>
+
+      <div class='panel'>
+        <p class='plabel'>Residual pressure at offtakes</p>
+        <table>
+          <thead>
+            <tr><th>Offtake</th><th>Surface</th><th>HGL</th><th>Residual</th></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <p class="note" id="capacity"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    DARCY–WEISBACH <code>h<sub>f</sub> = f · (L/D) · v² / 2g</code> with f from COLEBROOK–WHITE <code>1/&radic;f = &minus;2 log<sub>10</sub>( k/3.7D + 2.51/(Re&radic;f) )</code>, solved iteratively.<br>
+    Kinematic viscosity 1.141 × 10<sup>&minus;6</sup> m²/s (water at 15 °C). Internal diameter taken as nominal. Minor losses and reservoir entry loss are neglected. Flow steps down at every offtake, so the HGL is straight within a reach and breaks to a flatter slope past each draw-off.<br>
+    Residual head is measured above finished surface level. Pressure conversion at 9.81 kPa per metre of head.<br>
+    Rising main runs the full 6 000 m from Lake Wombat TP (20.00 m AHD) back to Cloud 9 Reservoir (120.00 m AHD): static lift 100.00 m plus friction, so its grade line falls toward the reservoir in the direction of flow. Shaft power assumes 75 % combined pump and motor efficiency; suction and minor losses are neglected.<br>
+</footer>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   1. SCHEME DEFINITION
+   ══════════════════════════════════════════════════════════ */
+const L      = 5000;      // main length, m
+const TWL    = 120;       // top water level, m AHD
+const COVER  = 2.0;       // pipe centreline below surface, m
+const MINRES = 15;        // minimum residual head, m
+const G      = 9.81;
+const LT     = 6000;      // full corridor out to the treatment plant, m
+const TPCH   = 6000;      // Lake Wombat Treatment Plant chainage, m
+const TPLVL  = 20;        // treatment plant water level, m AHD
+const PEFF   = 0.75;      // combined pump and motor efficiency
+
+const PROFILE = [
+  [0,116],[400,110],[800,101],[1200,92],[1600,84],[2000,77],
+  [2400,71],[2800,68],[3200,74],[3600,80],[4000,72],[4400,58],[5000,44],
+  [5300,36],[5600,28],[6000,20]
+];
+
+const OFFTAKES = [
+  {name:'Falls Creek Village', ch:1600},
+  {name:'Mount Hotham',        ch:3600},
+  {name:'Snow Town',           ch:5000}
+];
+
+let DEMAND = [0,0,0];                 // draw-off at each offtake, L/s
+let DN = 300, KS = 0.06;              // KS = absolute roughness, mm
+const QMAX = 120;                     // slider ceiling per offtake, L/s
+const PEAK = [30,25,45];              // demand pattern used by Sweep, L/s
+let QP = 0;                           // pump flow from Lake Wombat TP, L/s
+let showStatic = true, showBand = true, showEgl = false;
+
+/* ══════════════════════════════════════════════════════════
+   2. HYDRAULICS
+   ══════════════════════════════════════════════════════════ */
+function ground(ch){
+  if (ch <= PROFILE[0][0]) return PROFILE[0][1];
+  if (ch >= PROFILE[PROFILE.length-1][0]) return PROFILE[PROFILE.length-1][1];
+  for (let i=0;i<PROFILE.length-1;i++){
+    const [a,ea]=PROFILE[i], [b,eb]=PROFILE[i+1];
+    if (ch>=a && ch<=b) return ea + (eb-ea)*(ch-a)/(b-a);
+  }
+  return PROFILE[PROFILE.length-1][1];
+}
+const pipeElev = ch => ground(ch) - COVER;
+
+const NU = 1.141e-6;      // kinematic viscosity of water at 15 °C, m²/s
+
+function velocity(qLps, dn){
+  const A = Math.PI * Math.pow(dn/1000,2)/4;
+  return (qLps/1000)/A;
+}
+
+/** Colebrook–White friction factor: Swamee–Jain seed, then iterated to convergence. */
+function frictionFactor(Re, relK){
+  if (Re <= 0) return 0;
+  const laminar = 64/Re;
+  if (Re < 2000) return laminar;
+  let f = 0.25/Math.pow(Math.log10(relK/3.7 + 5.74/Math.pow(Re,0.9)), 2);
+  for (let i=0;i<14;i++){
+    const inv = -2*Math.log10(relK/3.7 + 2.51/(Re*Math.sqrt(f)));
+    f = 1/(inv*inv);
+  }
+  if (Re < 4000){                        // blend across the transition zone
+    const t = (Re-2000)/2000;
+    return laminar*(1-t) + f*t;
+  }
+  return f;
+}
+
+/** Darcy–Weisbach:  h_f = f · (L/D) · v² / 2g */
+function hydraulics(qLps, dn, ks){
+  const D = dn/1000, v = velocity(qLps, dn);
+  const Re = v*D/NU, relK = (ks/1000)/D;
+  const f  = frictionFactor(Re, relK);
+  return {v, Re, f, relK, vh: v*v/(2*G),
+          hf: qLps<=0 ? 0 : f*(L/D)*v*v/(2*G)};
+}
+
+/** Reach boundaries: the reservoir, then every offtake. */
+const CHS = [0].concat(OFFTAKES.map(o=>o.ch));
+
+/** A reach carries everything still drawn downstream of it. */
+function reachFlows(dem){
+  return OFFTAKES.map((o,i)=> dem.slice(i).reduce((a,b)=>a+b,0));
+}
+
+/** Head loss reach by reach, stepping the flow down at every offtake. */
+function reaches(dem, dn, ks){
+  const D = dn/1000, relK = (ks/1000)/D;
+  let head = TWL;
+  return reachFlows(dem).map((q,i)=>{
+    const from = CHS[i], to = CHS[i+1], len = to-from;
+    const v  = velocity(q, dn);
+    const Re = v*D/NU;
+    const f  = frictionFactor(Re, relK);
+    const hf = q<=0 ? 0 : f*(len/D)*v*v/(2*G);
+    const r  = {i, from, to, len, q, v, Re, relK, f, hf, vh:v*v/(2*G), hStart:head, hEnd:head-hf};
+    head -= hf;
+    return r;
+  });
+}
+
+/** Piecewise HGL: straight inside a reach, kinked at every draw-off. */
+function hglFn(rs){
+  return ch=>{
+    if (ch <= 0) return rs[0].hStart;
+    for (const r of rs) if (ch <= r.to) return r.hStart - (r.hStart-r.hEnd)*(ch-r.from)/r.len;
+    return rs[rs.length-1].hEnd;
+  };
+}
+
+/** Scale the present demand pattern up until an offtake falls to MINRES. */
+function patternCapacity(dn, ks){
+  const base = DEMAND.reduce((a,b)=>a+b,0) > 0 ? DEMAND.slice() : PEAK.slice();
+  const unit = base.reduce((a,b)=>a+b,0);
+  const worstAt = s=>{
+    const h = hglFn(reaches(base.map(q=>q*s), dn, ks));
+    let m = Infinity, gov = '';
+    OFFTAKES.forEach(o=>{ const res = h(o.ch)-ground(o.ch); if (res < m){ m = res; gov = o.name; } });
+    return {m, gov};
+  };
+  if (worstAt(0).m < MINRES) return {q:0, gov:worstAt(0).gov};
+  let lo = 0, hi = 5000/Math.max(unit, 1);
+  for (let i=0;i<70;i++){
+    const mid = (lo+hi)/2;
+    if (worstAt(mid).m < MINRES) hi = mid; else lo = mid;
+  }
+  return {q: unit*lo, gov: worstAt(lo).gov};
+}
+
+/** Rising main: static lift from the plant to TWL, plus friction over the full corridor. */
+function pumpDuty(qp, dn, ks){
+  const D = dn/1000, relK = (ks/1000)/D;
+  const v  = velocity(qp, dn);
+  const Re = v*D/NU;
+  const f  = frictionFactor(Re, relK);
+  const hf = qp<=0 ? 0 : f*(LT/D)*v*v/(2*G);
+  const lift = TWL - TPLVL;
+  const tdh  = lift + hf;
+  const kw   = qp<=0 ? 0 : (1000*G*(qp/1000)*tdh)/1000/PEFF;
+  const kwhML = qp<=0 ? 0 : kw*1000/(qp*3.6);
+  return {q:qp, v, Re, f, relK, hf, lift, tdh, kw, kwhML,
+          hgl: ch=> TWL + hf*(ch/LT)};
+}
+
+/** Everything the views need, for the current settings. */
+function solve(){
+  const rs  = reaches(DEMAND, DN, KS);
+  const hgl = hglFn(rs);
+  const up  = rs[0];
+  const hf  = rs.reduce((a,r)=>a+r.hf, 0);
+  const rows = OFFTAKES.map((o,i)=>{
+    const gl = ground(o.ch), h = hgl(o.ch);
+    return {...o, draw:DEMAND[i], gl, hgl:h, residual:h-gl, kpa:(h-gl)*G, ok:(h-gl)>=MINRES};
+  });
+  return {reaches:rs, hgl, hf, rows,
+          qTotal: DEMAND.reduce((a,b)=>a+b,0),
+          v:up.v, Re:up.Re, f:up.f, relK:up.relK, vh:up.vh,
+          cap: patternCapacity(DN, KS),
+          pump: pumpDuty(QP, DN, KS)};
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. LONG SECTION (SVG)
+   ══════════════════════════════════════════════════════════ */
+const svg = document.getElementById('section');
+const PX0=60, PX1=866, PY0=20, PY1=392, EMIN=10;
+let EMAX = 200;                       // top of the elevation axis, rescaled per frame
+const sx = ch => PX0 + (ch/LT)*(PX1-PX0);
+const sy = e  => PY1 - ((e-EMIN)/(EMAX-EMIN))*(PY1-PY0);
+
+function drawSection(S){
+  const p = [];
+  EMAX = Math.max(140, Math.ceil((TWL + S.pump.hf + 12)/20)*20);
+  const estep = EMAX > 300 ? 50 : 20;
+
+  p.push(`<defs>
+    <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="7" height="7" fill="#CBA47B"/>
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#8A6440" stroke-width="1.1"/>
+    </pattern>
+  </defs>`);
+
+  // ---- grid ----
+  for (let e=Math.ceil(EMIN/estep)*estep; e<=EMAX; e+=estep){
+    p.push(`<line x1="${PX0}" y1="${sy(e)}" x2="${PX1}" y2="${sy(e)}" stroke="#D3DCDF" stroke-width="1"/>`);
+    p.push(`<text x="${PX0-8}" y="${sy(e)+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#7C919B">${e}</text>`);
+  }
+  p.push(`<text x="${PX0-8}" y="${PY0+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7C919B" letter-spacing="1">m AHD</text>`);
+  for (let ch=0;ch<=LT;ch+=1000){
+    p.push(`<line x1="${sx(ch)}" y1="${PY1}" x2="${sx(ch)}" y2="${PY1+5}" stroke="#425A66" stroke-width="1"/>`);
+    p.push(`<text x="${sx(ch)}" y="${PY1+18}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#7C919B">${ch}</text>`);
+  }
+  p.push(`<text x="${(PX0+PX1)/2}" y="${PY1+32}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7C919B" letter-spacing="1.6">CHAINAGE (m)</text>`);
+
+  // ---- ground body ----
+  let gpath = `M ${sx(0)} ${sy(ground(0))}`;
+  for (let ch=0;ch<=LT;ch+=50) gpath += ` L ${sx(ch)} ${sy(ground(ch))}`;
+  gpath += ` L ${PX1} ${PY1} L ${PX0} ${PY1} Z`;
+  p.push(`<path d="${gpath}" fill="url(#hatch)" opacity="0.55"/>`);
+  let gline = `M ${sx(0)} ${sy(ground(0))}`;
+  for (let ch=0;ch<=LT;ch+=50) gline += ` L ${sx(ch)} ${sy(ground(ch))}`;
+  p.push(`<path d="${gline}" fill="none" stroke="#5E4426" stroke-width="2"/>`);
+
+  // ---- pressure band (HGL down to surface), split at crossings ----
+  if (showBand && S.hf > 0){
+    let run = [];
+    const flush = () => {
+      if (run.length > 1){
+        let d = `M ${sx(run[0])} ${sy(S.hgl(run[0]))}`;
+        run.forEach(ch => d += ` L ${sx(ch)} ${sy(S.hgl(ch))}`);
+        for (let i=run.length-1;i>=0;i--) d += ` L ${sx(run[i])} ${sy(ground(run[i]))}`;
+        p.push(`<path d="${d} Z" fill="#17B6D9" opacity="0.17"/>`);
+      }
+      run = [];
+    };
+    for (let ch=0;ch<=L;ch+=25){
+      if (S.hgl(ch) > ground(ch)) run.push(ch); else flush();
+    }
+    flush();
+  }
+
+  // ---- reservoir ----
+  const rx = sx(0), ry = sy(TWL);
+  p.push(`<rect x="${rx-24}" y="${ry-6}" width="30" height="${sy(112)-ry+6}" fill="#DCE4E7" stroke="#16232B" stroke-width="1.6"/>`);
+  p.push(`<rect x="${rx-24}" y="${ry}" width="30" height="${sy(112)-ry}" fill="#17B6D9" opacity="0.42"/>`);
+  p.push(`<line x1="${rx-30}" y1="${ry}" x2="${rx+10}" y2="${ry}" stroke="#0B7F9E" stroke-width="2"/>`);
+  p.push(`<text x="${rx-9}" y="${ry-11}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#0B7F9E">TWL 120.00</text>`);
+
+  // ---- pipeline ----
+  let ppath = `M ${sx(0)} ${sy(pipeElev(0))}`;
+  for (let ch=0;ch<=L;ch+=50) ppath += ` L ${sx(ch)} ${sy(pipeElev(ch))}`;
+  p.push(`<path d="${ppath}" fill="none" stroke="#16232B" stroke-width="3.4" stroke-linecap="round"/>`);
+  p.push(`<path d="${ppath}" fill="none" stroke="#8FA2AB" stroke-width="1.2"/>`);
+
+  // ---- static HGL ghost ----
+  if (showStatic){
+    p.push(`<line x1="${sx(0)}" y1="${sy(TWL)}" x2="${sx(L)}" y2="${sy(TWL)}" stroke="#0B7F9E" stroke-width="1.4" stroke-dasharray="2 5" opacity="0.65"/>`);
+    p.push(`<text x="${PX1+6}" y="${sy(TWL)+4}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#0B7F9E" opacity="0.85">STATIC HGL</text>`);
+  }
+
+  // ---- EGL ----
+  if (showEgl && S.hf > 0){
+    S.reaches.forEach(r=>{
+      p.push(`<line x1='${sx(r.from)}' y1='${sy(r.hStart+r.vh)}' x2='${sx(r.to)}' y2='${sy(r.hEnd+r.vh)}' stroke='#16232B' stroke-width='1.2' stroke-dasharray='6 4' opacity='0.8'/>`);
+    });
+    p.push(`<text x='${sx(700)}' y='${sy(S.hgl(700)+S.reaches[0].vh)-6}' font-family='IBM Plex Mono, monospace' font-size='9.5' fill='#425A66'>EGL</text>`);
+  }
+
+  // ---- HGL ----
+  let hglPath = `M ${sx(0)} ${sy(TWL)}`;
+  S.reaches.forEach(r=>{ hglPath += ` L ${sx(r.to)} ${sy(r.hEnd)}`; });
+  p.push(`<path d='${hglPath}' fill='none' stroke='#0B7F9E' stroke-width='3.2' stroke-linejoin='round'/>`);
+  S.reaches.slice(0,-1).forEach(r=>{ p.push(`<circle cx='${sx(r.to)}' cy='${sy(r.hEnd)}' r='3.2' fill='#0B7F9E'/>`); });
+  const midCh = 2000;
+  p.push(`<text x="${sx(midCh)}" y="${sy(S.hgl(midCh))-9}" font-family="Barlow Condensed, sans-serif" font-size="15" font-weight="700" fill="#0B7F9E" letter-spacing="1.4">HYDRAULIC GRADE LINE</text>`);
+
+  // ---- offtake markers ----
+  S.rows.forEach(r=>{
+    const x = sx(r.ch), yg = sy(r.gl), yh = sy(r.hgl);
+    const col = r.ok ? '#0B7F9E' : '#B32636';
+    p.push(`<line x1="${x}" y1="${yg}" x2="${x}" y2="${Math.min(yh,yg)}" stroke="${col}" stroke-width="2"/>`);
+    p.push(`<line x1="${x-5}" y1="${yh}" x2="${x+5}" y2="${yh}" stroke="${col}" stroke-width="2"/>`);
+    p.push(`<circle cx="${x}" cy="${yg}" r="3.4" fill="${col}"/>`);
+    const anchor = r.ch >= L-200 ? 'end' : 'middle';
+    const dx = r.ch >= L-200 ? -8 : 0;
+    const ty = Math.min(yh,yg) - 10;
+    p.push(`<text x="${x+dx}" y="${ty}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="${col}">${r.residual.toFixed(1)} m</text>`);
+    p.push(`<text x="${x+dx}" y="${ty+11}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="${col}" opacity="0.8">${Math.round(r.kpa)} kPa</text>`);
+    p.push(`<text x="${x}" y="${PY1+18}" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="12" font-weight="600" fill="#425A66" letter-spacing=".6">${r.name.toUpperCase()}</text>`);
+  });
+
+  // ---- rising main, treatment plant and pumped HGL ----
+  let rpath = `M ${sx(0)} ${sy(pipeElev(0)-1.4)}`;
+  for (let ch=0;ch<=LT;ch+=50) rpath += ` L ${sx(ch)} ${sy(pipeElev(ch)-1.4)}`;
+  p.push(`<path d='${rpath}' fill='none' stroke='#6E4B9E' stroke-width='2.6' stroke-linecap='round'/>`);
+
+  const P = S.pump;
+  const tx = sx(TPCH), ty = sy(TPLVL);
+  p.push(`<rect x='${tx-34}' y='${ty-30}' width='34' height='30' fill='#DCE4E7' stroke='#16232B' stroke-width='1.6'/>`);
+  const pumpCol = P.q > 0 ? '#6E4B9E' : '#8FA2AB';
+  p.push(`<circle cx='${tx-17}' cy='${ty-15}' r='8' fill='${pumpCol}'/>`);
+  p.push(`<path d='M ${tx-21} ${ty-20} L ${tx-10} ${ty-15} L ${tx-21} ${ty-10} Z' fill='#FFFFFF'/>`);
+  p.push(`<text x='${tx-17}' y='${ty-38}' text-anchor='middle' font-family='Barlow Condensed, sans-serif' font-size='12' font-weight='600' fill='#425A66' letter-spacing='.6'>LAKE WOMBAT TP</text>`);
+  p.push(`<text x='${tx-17}' y='${PY1+31}' text-anchor='middle' font-family='Barlow Condensed, sans-serif' font-size='12' font-weight='600' fill='#6E4B9E' letter-spacing='.6'>PUMP STATION</text>`);
+
+  if (P.q > 0){
+    const ay = sy(TWL + P.hf*0.40) - 4;
+    p.push(`<line x1='${sx(0)}' y1='${sy(TWL)}' x2='${sx(LT)}' y2='${sy(TWL+P.hf)}' stroke='#6E4B9E' stroke-width='3' stroke-dasharray='10 4'/>`);
+    p.push(`<line x1='${tx}' y1='${sy(TPLVL)}' x2='${tx}' y2='${sy(TWL+P.hf)}' stroke='#6E4B9E' stroke-width='1.6' stroke-dasharray='3 3'/>`);
+    p.push(`<text x='${tx-6}' y='${sy(TWL+P.hf)-9}' text-anchor='end' font-family='IBM Plex Mono, monospace' font-size='11.5' font-weight='600' fill='#6E4B9E'>TDH ${P.tdh.toFixed(1)} m</text>`);
+    p.push(`<path d='M ${sx(3050)} ${ay} L ${sx(2350)} ${ay} m 9 -5 l -9 5 l 9 5' fill='none' stroke='#6E4B9E' stroke-width='2'/>`);
+    p.push(`<text x='${sx(3150)}' y='${ay+5}' font-family='Barlow Condensed, sans-serif' font-size='15' font-weight='700' fill='#6E4B9E' letter-spacing='1.4'>PUMPED HGL — RISING MAIN</text>`);
+  }
+
+  svg.innerHTML = p.join('');
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. THREE-DIMENSIONAL SCENE
+   ══════════════════════════════════════════════════════════ */
+const XS = 0.02;                 // 1 m chainage  → 0.02 units
+const YS = 0.16;                 // 1 m elevation → 0.16 units (V.E. = 8)
+const ZHALF = 6;                 // ±300 m corridor
+const X = ch => ch*XS;
+const Y = e  => (e-EMIN)*YS;
+
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xE5EBED);
+scene.fog = new THREE.Fog(0xE5EBED, 250, 600);
+
+const camera = new THREE.PerspectiveCamera(38, 2, 0.5, 760);
+const target = new THREE.Vector3(60, 12, 0);
+let cam = {r:132, theta:0.30, phi:1.20};
+function placeCamera(){
+  const {r,theta,phi} = cam;
+  camera.position.set(
+    target.x + r*Math.sin(phi)*Math.sin(theta),
+    target.y + r*Math.cos(phi),
+    target.z + r*Math.sin(phi)*Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+
+scene.add(new THREE.HemisphereLight(0xFFFFFF, 0x9A8B78, 0.95));
+const sun = new THREE.DirectionalLight(0xFFF6E8, 0.75);
+sun.position.set(-40, 70, 60);
+scene.add(sun);
+
+// --- terrain block (top surface + earth skirt) ---
+const trench = zm => 3.5*Math.exp(-Math.pow(zm/28,2));
+const surf = (ch, zm) => ground(ch) - 0.00008*zm*zm - trench(zm);
+
+const NX = 200, NZ = 44;
+function buildTerrain(){
+  const top = [], idx = [];
+  for (let j=0;j<=NZ;j++){
+    for (let i=0;i<=NX;i++){
+      const ch = (i/NX)*LT;
+      const z  = -ZHALF + (j/NZ)*2*ZHALF;
+      top.push(X(ch), Y(surf(ch, z/XS)), z);
+    }
+  }
+  for (let j=0;j<NZ;j++) for (let i=0;i<NX;i++){
+    const a=j*(NX+1)+i, b=a+1, c=a+NX+1, d=c+1;
+    idx.push(a,c,b, b,c,d);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(top,3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  scene.add(new THREE.Mesh(g, new THREE.MeshLambertMaterial({color:0x93A08D})));
+
+  // skirt: two long sides + two ends, dropped to base
+  const baseY = 0, sv = [], si = [];
+  const edge = [];
+  for (let i=0;i<=NX;i++){ const ch=(i/NX)*LT; edge.push([X(ch), Y(surf(ch,-ZHALF/XS)), -ZHALF]); }
+  const edge2 = [];
+  for (let i=0;i<=NX;i++){ const ch=(i/NX)*LT; edge2.push([X(ch), Y(surf(ch, ZHALF/XS)),  ZHALF]); }
+  function strip(list, flip){
+    const o = sv.length/3;
+    list.forEach(pt=>{ sv.push(pt[0],pt[1],pt[2], pt[0],baseY,pt[2]); });
+    for (let i=0;i<list.length-1;i++){
+      const a=o+i*2, b=a+1, c=a+2, d=a+3;
+      if (flip) si.push(a,b,c, b,d,c); else si.push(a,c,b, b,c,d);
+    }
+  }
+  strip(edge, true); strip(edge2, false);
+  // ends
+  const endAt = (ch, flip) => {
+    const o = sv.length/3, list=[];
+    for (let j=0;j<=NZ;j++){ const z=-ZHALF+(j/NZ)*2*ZHALF; list.push([X(ch), Y(surf(ch,z/XS)), z]); }
+    list.forEach(pt=>{ sv.push(pt[0],pt[1],pt[2], pt[0],baseY,pt[2]); });
+    for (let i=0;i<list.length-1;i++){
+      const a=o+i*2, b=a+1, c=a+2, d=a+3;
+      if (flip) si.push(a,b,c, b,d,c); else si.push(a,c,b, b,c,d);
+    }
+  };
+  endAt(0,false); endAt(LT,true);
+  const gs = new THREE.BufferGeometry();
+  gs.setAttribute('position', new THREE.Float32BufferAttribute(sv,3));
+  gs.setIndex(si);
+  gs.computeVertexNormals();
+  scene.add(new THREE.Mesh(gs, new THREE.MeshLambertMaterial({color:0xB08454, side:THREE.DoubleSide})));
+}
+buildTerrain();
+
+// --- pipeline ---
+(function(){
+  const pts = [];
+  for (let ch=0; ch<=L; ch+=50) pts.push(new THREE.Vector3(X(ch), Y(pipeElev(ch)), 0));
+  const curve = new THREE.CatmullRomCurve3(pts);
+  scene.add(new THREE.Mesh(
+    new THREE.TubeGeometry(curve, 160, 0.24, 10, false),
+    new THREE.MeshLambertMaterial({color:0x24333B})
+  ));
+})();
+
+// --- rising main back to the reservoir ---
+(function(){
+  const pts = [];
+  for (let ch=0; ch<=LT; ch+=50) pts.push(new THREE.Vector3(X(ch), Y(pipeElev(ch)-1.4), 1.2));
+  const curve = new THREE.CatmullRomCurve3(pts);
+  scene.add(new THREE.Mesh(
+    new THREE.TubeGeometry(curve, 190, 0.22, 10, false),
+    new THREE.MeshLambertMaterial({color:0x6E4B9E})
+  ));
+})();
+
+// --- Lake Wombat treatment plant and pump station ---
+(function(){
+  const base = Y(surf(TPCH, 0));
+  const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.6,Y(TPLVL)+0.35-base,26),
+    new THREE.MeshLambertMaterial({color:0xC9D3D7}));
+  tank.position.set(X(TPCH), (Y(TPLVL)+0.35+base)/2, 0);
+  scene.add(tank);
+  const water = new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,0.06,26),
+    new THREE.MeshBasicMaterial({color:0x17B6D9}));
+  water.position.set(X(TPCH), Y(TPLVL)+0.2, 0);
+  scene.add(water);
+  const shed = new THREE.Mesh(new THREE.BoxGeometry(1.0,0.8,1.0),
+    new THREE.MeshLambertMaterial({color:0x6E4B9E}));
+  shed.position.set(X(TPCH)-2.4, base+0.4, 1.2);
+  scene.add(shed);
+})();
+
+// --- reservoir ---
+(function(){
+  const base = 114, top = 121.5;
+  const tank = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.0,1.0,Y(top)-Y(base),26,1,true),
+    new THREE.MeshLambertMaterial({color:0xC9D3D7, side:THREE.DoubleSide})
+  );
+  tank.position.set(X(0), (Y(top)+Y(base))/2, 0);
+  scene.add(tank);
+  const water = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.97,0.97,0.06,26),
+    new THREE.MeshBasicMaterial({color:0x17B6D9})
+  );
+  water.position.set(X(0), Y(TWL), 0);
+  scene.add(water);
+})();
+
+// --- town ---
+(function(){
+  const mat = new THREE.MeshLambertMaterial({color:0xB9BEB4});
+  for (let i=0;i<16;i++){
+    const ch = 4450 + Math.random()*550;
+    const zm = (Math.random()-0.5)*380;
+    const h = 0.5 + Math.random()*0.9;
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.45,h,0.45), mat);
+    b.position.set(X(ch), Y(surf(ch,zm))+h/2, zm*XS);
+    scene.add(b);
+  }
+})();
+
+// --- hydraulic grade surface (straight line ⇒ a tilted plane) ---
+const sheetGeo = new THREE.PlaneGeometry(1, ZHALF*1.6, 1, 1);
+sheetGeo.rotateX(-Math.PI/2); sheetGeo.translate(0.5, 0, 0);
+const lineGeo = new THREE.BoxGeometry(1, 0.16, 0.16); lineGeo.translate(0.5, 0, 0);
+
+// one tilted panel per reach — the grade surface now breaks at every offtake
+const hglParts = OFFTAKES.map(()=>{
+  const g  = new THREE.Group();
+  const sh = new THREE.Mesh(sheetGeo.clone(), new THREE.MeshBasicMaterial({
+    color:0x17B6D9, transparent:true, opacity:0.26, side:THREE.DoubleSide, depthWrite:false
+  }));
+  const ln = new THREE.Mesh(lineGeo.clone(), new THREE.MeshBasicMaterial({color:0x0B7F9E}));
+  g.add(sh, ln);
+  scene.add(g);
+  return {g, sh, ln};
+});
+
+// --- pumped grade surface for the rising main ---
+const pumpGroup = new THREE.Group();
+const pumpSheet = new THREE.Mesh(sheetGeo.clone(), new THREE.MeshBasicMaterial({
+  color:0x6E4B9E, transparent:true, opacity:0.20, side:THREE.DoubleSide, depthWrite:false
+}));
+const pumpLine = new THREE.Mesh(lineGeo.clone(), new THREE.MeshBasicMaterial({color:0x6E4B9E}));
+pumpGroup.add(pumpSheet, pumpLine);
+scene.add(pumpGroup);
+
+// --- static HGL ghost plane ---
+const staticGroup = new THREE.Group();
+const ghost = new THREE.Mesh(sheetGeo.clone(), new THREE.MeshBasicMaterial({
+  color:0x0B7F9E, transparent:true, opacity:0.09, side:THREE.DoubleSide, depthWrite:false
+}));
+const ghostLine = new THREE.Mesh(lineGeo.clone(), new THREE.MeshBasicMaterial({
+  color:0x0B7F9E, transparent:true, opacity:0.45
+}));
+ghost.scale.x = X(L); ghostLine.scale.x = X(L);
+staticGroup.add(ghost, ghostLine);
+staticGroup.position.set(0, Y(TWL), 0);
+scene.add(staticGroup);
+
+// --- piezometers at each offtake ---
+const piezos = OFFTAKES.map(o=>{
+  const base = pipeElev(o.ch), topY = Y(TWL)+0.9, baseY = Y(base);
+  const glass = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.24,0.24,topY-baseY,14,1,true),
+    new THREE.MeshLambertMaterial({color:0xE9F1F3, transparent:true, opacity:0.3, side:THREE.DoubleSide})
+  );
+  glass.position.set(X(o.ch), (topY+baseY)/2, 0);
+  scene.add(glass);
+
+  const colGeo = new THREE.CylinderGeometry(0.18,0.18,1,14); colGeo.translate(0,0.5,0);
+  const col = new THREE.Mesh(colGeo, new THREE.MeshLambertMaterial({color:0x17B6D9}));
+  col.position.set(X(o.ch), baseY, 0);
+  scene.add(col);
+  return {o, col, baseY};
+});
+
+// --- HTML labels projected from world space ---
+const labelBox = document.getElementById('labels');
+const labelDefs = [
+  {id:'res', el:null, text:()=>'CLOUD 9 RESERVOIR', pos:()=>new THREE.Vector3(X(0), Y(122.5), 0), cls:'lab'},
+  {id:'tp', el:null, text:()=>'LAKE WOMBAT TP', pos:()=>new THREE.Vector3(X(TPCH), Y(TPLVL)+2.6, 0), cls:'lab'},
+  ...OFFTAKES.map((o,i)=>({
+    id:'o'+i, el:null,
+    text:S=>`${o.name.toUpperCase()}  ${S.rows[i].residual.toFixed(1)} m`,
+    pos:S=>new THREE.Vector3(X(o.ch), Math.max(Y(S.rows[i].hgl), Y(ground(o.ch)))+0.8, 0),
+    cls:S=>'lab '+(S.rows[i].ok?'water':'bad')
+  }))
+];
+labelDefs.forEach(d=>{ d.el = document.createElement('div'); labelBox.appendChild(d.el); });
+
+function updateLabels(S){
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  labelDefs.forEach(d=>{
+    const v = (typeof d.pos==='function'? d.pos(S) : d.pos).clone().project(camera);
+    if (v.z > 1){ d.el.style.display='none'; return; }
+    d.el.style.display='block';
+    d.el.className = typeof d.cls==='function' ? d.cls(S) : d.cls;
+    d.el.textContent = typeof d.text==='function' ? d.text(S) : d.text;
+    d.el.style.left = ((v.x*0.5+0.5)*w) + 'px';
+    d.el.style.top  = ((-v.y*0.5+0.5)*h) + 'px';
+  });
+}
+
+function updateScene(S){
+  S.reaches.forEach((r,i)=>{
+    const part = hglParts[i];
+    const x0 = X(r.from), y0 = Y(r.hStart);
+    const dx = X(r.to)-x0, dy = Y(r.hEnd)-y0;
+    part.g.position.set(x0, y0, 0);
+    part.g.rotation.z = Math.atan2(dy, dx);
+    const len = Math.hypot(dx, dy);
+    part.sh.scale.x = len;
+    part.ln.scale.x = len;
+  });
+  const P = S.pump;
+  pumpGroup.visible = P.q > 0;
+  if (P.q > 0){
+    const x0 = X(0), y0 = Y(TWL);
+    const dx = X(LT)-x0, dy = Y(TWL+P.hf)-y0;
+    pumpGroup.position.set(x0, y0, 1.2);
+    pumpGroup.rotation.z = Math.atan2(dy, dx);
+    const plen = Math.hypot(dx, dy);
+    pumpSheet.scale.x = plen; pumpLine.scale.x = plen;
+  }
+  staticGroup.visible = showStatic && S.hf > 0.01;
+
+  piezos.forEach((p,i)=>{
+    const top = Y(S.rows[i].hgl);
+    const hgt = Math.max(0.02, top - p.baseY);
+    p.col.scale.y = hgt;
+    p.col.material.color.setHex(S.rows[i].ok ? 0x17B6D9 : 0xB32636);
+    p.col.visible = top > p.baseY;
+  });
+}
+
+function resize(){
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h, false);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', ()=>{ resize(); render(); });
+
+let latest = null;
+function render(){
+  placeCamera();
+  renderer.render(scene, camera);
+  if (latest) updateLabels(latest);
+}
+
+/* --- orbit controls (hand-rolled: r128 ships no OrbitControls) --- */
+let drag=null;
+canvas.style.touchAction = 'none';
+canvas.addEventListener('pointerdown', e=>{ drag={x:e.clientX,y:e.clientY}; canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointerup',   e=>{ drag=null; });
+canvas.addEventListener('pointermove', e=>{
+  if (!drag) return;
+  cam.theta -= (e.clientX-drag.x)*0.006;
+  cam.phi    = Math.min(1.46, Math.max(0.18, cam.phi - (e.clientY-drag.y)*0.005));
+  drag={x:e.clientX,y:e.clientY};
+  render();
+});
+canvas.addEventListener('wheel', e=>{
+  e.preventDefault();
+  cam.r = Math.min(280, Math.max(34, cam.r + e.deltaY*0.09));
+  render();
+}, {passive:false});
+
+/* ══════════════════════════════════════════════════════════
+   5. PANEL + WIRING
+   ══════════════════════════════════════════════════════════ */
+const el = id => document.getElementById(id);
+
+function updatePanel(S){
+  DEMAND.forEach((d,i)=>{ el('q'+i+'Out').innerHTML = `${d}<i>L/s</i>`; });
+  el('qTotOut').innerHTML = `${S.qTotal}<i>L/s</i>`;
+  el('qpOut').innerHTML = `${QP}<i>L/s</i>`;
+  el('dOut').textContent = 'DN'+DN;
+  el('cOut').textContent = `k = ${KS} mm`;
+  el('roV').innerHTML  = `${S.v.toFixed(2)}<i>m/s</i>`;
+  el('roRe').innerHTML = S.Re > 0 ? `${(S.Re/1000).toFixed(0)}<i>×10³</i>` : '—';
+  el('roF').innerHTML  = S.f > 0 ? S.f.toFixed(4) : '—';
+  el('roK').innerHTML  = `${(S.relK*1000).toFixed(3)}<i>×10⁻³</i>`;
+  el('roS').innerHTML  = `${(S.reaches[0].hf/S.reaches[0].len*1000).toFixed(2)}<i>m/km</i>`;
+  el('roH').innerHTML  = `${S.hf.toFixed(2)}<i>m</i>`;
+  el('roVh').innerHTML = `${S.vh.toFixed(3)}<i>m</i>`;
+  el('roReg').innerHTML = S.Re === 0 ? 'Static'
+                        : S.Re < 2000 ? 'Laminar'
+                        : S.Re < 4000 ? 'Transitional'
+                        : 'Turbulent';
+
+  el('tbody').innerHTML = S.rows.map(r=>`
+    <tr class="${r.ok?'':'fail'}">
+      <td>${r.name}<br><span class="chip" style="color:#7C919B">CH ${r.ch}</span></td>
+      <td>${r.gl.toFixed(1)}</td>
+      <td>${r.hgl.toFixed(1)}</td>
+      <td>${r.residual.toFixed(1)} m<br><span class="chip">${Math.round(r.kpa)} kPa</span></td>
+    </tr>`).join('');
+
+  el('rbody').innerHTML = S.reaches.map((r,i)=>`
+    <tr>
+      <td>Reach ${i+1}<br><span class='chip' style='color:#7C919B'>CH ${r.from} – ${r.to}</span></td>
+      <td>${r.q}</td>
+      <td>${r.v.toFixed(2)}</td>
+      <td>${(r.hf/r.len*1000).toFixed(2)}</td>
+      <td>${r.hf.toFixed(2)}</td>
+    </tr>`).join('');
+
+  const worst = S.rows.reduce((a,b)=> b.residual<a.residual ? b : a);
+  const a = el('alert');
+  if (S.qTotal === 0){
+    a.className = 'alertbar clear';
+    a.innerHTML = 'Static condition — the HGL is <b>flat at TWL 120.00</b>. No flow, no friction, no slope.';
+  } else if (S.rows.some(r=>r.hgl < pipeElev(r.ch))){
+    a.className = 'alertbar';
+    a.innerHTML = `The HGL has fallen <b>below the pipe</b>. Gravity cannot deliver ${S.qTotal} L/s through DN${DN} at k = ${KS} mm — upsize the main or reduce the flow.`;
+  } else if (!worst.ok){
+    a.className = 'alertbar';
+    a.innerHTML = `<b>${worst.name}</b> is down to ${worst.residual.toFixed(1)} m (${Math.round(worst.kpa)} kPa) — below the ${MINRES} m minimum.`;
+  } else {
+    a.className = 'alertbar clear';
+    a.innerHTML = `All offtakes compliant. <b>${worst.name}</b> governs at ${worst.residual.toFixed(1)} m residual.`;
+  }
+
+  el('capacity').innerHTML =
+    `Holding ${MINRES} m at every offtake, this demand pattern can rise to <b>${S.cap.q.toFixed(0)} L/s</b> total ` +
+    `on DN${DN} at k = ${KS} mm. The governing point is <b>${S.cap.gov}</b> — note it is not always the far end of the main.`;
+
+  const P = S.pump;
+  el('puLift').innerHTML = `${P.lift.toFixed(1)}<i>m</i>`;
+  el('puHf').innerHTML   = `${P.hf.toFixed(2)}<i>m</i>`;
+  el('puTdh').innerHTML  = `${P.tdh.toFixed(1)}<i>m</i>`;
+  el('puV').innerHTML    = `${P.v.toFixed(2)}<i>m/s</i>`;
+  el('puKw').innerHTML   = `${P.kw.toFixed(0)}<i>kW</i>`;
+  el('puKwh').innerHTML  = P.q > 0 ? `${P.kwhML.toFixed(0)}<i>kWh/ML</i>` : '—';
+
+  const bal = el('balance');
+  const net = P.q - S.qTotal;
+  if (P.q === 0 && S.qTotal === 0){
+    bal.className = 'alertbar clear';
+    bal.innerHTML = `Pump idle, no demand. Static lift from Lake Wombat to Cloud 9 is <b>${P.lift.toFixed(1)} m</b>.`;
+  } else if (P.q === 0){
+    bal.className = 'alertbar';
+    bal.innerHTML = `Pump is off while the town draws <b>${S.qTotal} L/s</b> — Cloud 9 is emptying.`;
+  } else if (P.v > 3){
+    bal.className = 'alertbar';
+    bal.innerHTML = `Rising main velocity is <b>${P.v.toFixed(2)} m/s</b> — far too fast for DN${DN}. Upsize the main or ease the pump back.`;
+  } else if (net < 0){
+    bal.className = 'alertbar';
+    bal.innerHTML = `Pumping <b>${P.q} L/s</b> against a draw of <b>${S.qTotal} L/s</b> — Cloud 9 falls by <b>${Math.abs(net)} L/s</b>.`;
+  } else {
+    bal.className = 'alertbar clear';
+    bal.innerHTML = `Pumping <b>${P.q} L/s</b> against a draw of <b>${S.qTotal} L/s</b> — Cloud 9 gains <b>${net} L/s</b>.`;
+  }
+}
+
+function update(){
+  const S = solve();
+  latest = S;
+  drawSection(S);
+  updateScene(S);
+  render();
+  updatePanel(S);
+}
+
+// controls
+DEMAND.forEach((d,i)=>{
+  el('q'+i).addEventListener('input', e=>{ DEMAND[i] = +e.target.value; update(); });
+});
+el('qp').addEventListener('input', e=>{ QP = +e.target.value; update(); });
+function segment(id, attr, setter){
+  el(id).addEventListener('click', e=>{
+    const b = e.target.closest('button'); if (!b) return;
+    [...el(id).querySelectorAll('button')].forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    setter(+b.dataset[attr]);
+    update();
+  });
+}
+segment('dSeg','d', v=>DN=v);
+segment('cSeg','k', v=>KS=v);
+el('tStatic').addEventListener('change', e=>{ showStatic=e.target.checked; update(); });
+el('tBand').addEventListener('change',   e=>{ showBand=e.target.checked;   update(); });
+el('tEgl').addEventListener('change',    e=>{ showEgl=e.target.checked;    update(); });
+
+el('reset').addEventListener('click', ()=>{
+  DEMAND = [0,0,0];
+  DEMAND.forEach((d,i)=>{ el('q'+i).value = 0; });
+  QP = 0; el('qp').value = 0;
+  cam = {r:132, theta:0.30, phi:1.20};
+  update();
+});
+
+let sweeping = null;
+el('sweep').addEventListener('click', ()=>{
+  if (sweeping){ cancelAnimationFrame(sweeping); sweeping=null; el('sweep').textContent='Sweep flow'; return; }
+  el('sweep').textContent = 'Stop';
+  const t0 = performance.now(), dur = 7000;
+  const step = t => {
+    const k = Math.min(1, (t-t0)/dur);
+    DEMAND = PEAK.map(p=>Math.round(k*p));
+    DEMAND.forEach((d,i)=>{ el('q'+i).value = d; });
+    QP = Math.round(k*100);
+    el('qp').value = QP;
+    update();
+    if (k < 1) sweeping = requestAnimationFrame(step);
+    else { sweeping = null; el('sweep').textContent = 'Sweep flow'; }
+  };
+  sweeping = requestAnimationFrame(step);
+});
+
+resize();
+update();
+</script>
+<div style="max-width:1460px;margin:0 auto;padding:12px 18px 34px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink-3)">Idea by Joseph Lin, coded by Claude. 23 Aug 2026</div>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "353a238570174dac9fc4df5cd73e5341"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

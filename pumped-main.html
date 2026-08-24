@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pumped Main — Rising Main to Cloud 9 Reservoir</title>
+<title>Pumped Main — Common Main to Cloud 9 Reservoir</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
     --earth-dark:#7E5B36;
     --alarm:#B32636;
     --ok:#2E7D5B;
+    --pump:#6E4B9E;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
     --cond:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
     --body:'Barlow',system-ui,-apple-system,sans-serif;
@@ -124,6 +125,8 @@
     width:15px;height:22px;background:var(--hydro);border:0;border-radius:1px;
   }
   input[type=range]:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  input#qp::-webkit-slider-thumb{background:var(--pump)}
+  input#qp::-moz-range-thumb{background:var(--pump)}
 
   .seg{display:flex;flex-wrap:wrap;gap:4px}
   .seg button{
@@ -172,12 +175,15 @@
   tr.fail td{color:var(--alarm)}
   tr.fail td:first-child{font-weight:600}
   .chip{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+  .rev{color:var(--pump);font-weight:600}
+  .fwd{color:var(--hydro);font-weight:600}
 
   .alertbar{
     margin-top:12px;padding:9px 11px;border-left:3px solid var(--alarm);
     background:#F7E7E9;font-size:13.5px;line-height:1.4;color:#5E1520;
   }
   .alertbar.clear{border-left-color:var(--ok);background:#E4F1EA;color:#1D4E39}
+  .alertbar.pumped{border-left-color:var(--pump);background:#EEE8F5;color:#3D2A5C}
   .alertbar b{font-weight:600}
 
   .note{
@@ -198,12 +204,12 @@
 
   <div class="titleblock">
     <div>
-      <p class='eyebrow'>Water supply training · Sheet 02 of 02 · <a href='./' style='color:inherit'>&larr; gravity main</a></p>
-      <h1>Pumped main —<br><em>rising main to cloud 9</em></h1>
+      <p class="eyebrow">Water supply training · Sheet 02 of 02 · <a href="./" style="color:inherit">&larr; gravity main</a></p>
+      <h1>Pumped main —<br><em>one pipe, two directions</em></h1>
     </div>
     <div class="stamp">
-      SCHEME <b>Lake Wombat TP → Cloud 9 Reservoir → Snow Town</b><br>
-      CORRIDOR <b>6 000 m</b> · TWL <b>120.00 m AHD</b> · TP <b>20.00 m AHD</b><br>
+      SCHEME <b>Cloud 9 Reservoir &harr; Snow Town &harr; Lake Wombat TP</b><br>
+      COMMON MAIN <b>6 000 m</b> · TWL <b>120.00 m AHD</b> · TP <b>20.00 m AHD</b><br>
       METHOD <b>Darcy–Weisbach / Colebrook–White</b><br>MIN. RESIDUAL <b>15 m</b> · PUMP SET <b>75 % efficient</b> · WATER AT <b>15 °C</b>
     </div>
   </div>
@@ -219,8 +225,8 @@
       </div>
 
       <div class="frame">
-        <span class='tag'>Long section — CH 0 to CH 6000</span>
-        <svg id="section" viewBox='0 0 1000 440' role="img" aria-label="Long section showing ground profile, pipeline, and hydraulic grade line"></svg>
+        <span class="tag">Long section — CH 0 to CH 6000 · single common main</span>
+        <svg id="section" viewBox="0 0 1000 452" role="img" aria-label="Long section showing the common main, ground profile and hydraulic grade line"></svg>
       </div>
     </div>
 
@@ -229,27 +235,27 @@
         <p class="plabel">Operating condition</p>
 
         <div class="ctl">
-          <div class='ctl-head'><span>Falls Creek Village</span><b id='q0Out'>0<i>L/s</i></b></div>
-          <input id='q0' type='range' min='0' max='120' step='1' value='0' aria-label='Draw-off at Falls Creek Village, litres per second'>
+          <div class="ctl-head"><span>Falls Creek Village</span><b id="q0Out">0<i>L/s</i></b></div>
+          <input id="q0" type="range" min="0" max="120" step="1" value="0" aria-label="Draw-off at Falls Creek Village, litres per second">
         </div>
 
-        <div class='ctl'>
-          <div class='ctl-head'><span>Mount Hotham</span><b id='q1Out'>0<i>L/s</i></b></div>
-          <input id='q1' type='range' min='0' max='120' step='1' value='0' aria-label='Draw-off at Mount Hotham, litres per second'>
+        <div class="ctl">
+          <div class="ctl-head"><span>Mount Hotham</span><b id="q1Out">0<i>L/s</i></b></div>
+          <input id="q1" type="range" min="0" max="120" step="1" value="0" aria-label="Draw-off at Mount Hotham, litres per second">
         </div>
 
-        <div class='ctl'>
-          <div class='ctl-head'><span>Snow Town</span><b id='q2Out'>0<i>L/s</i></b></div>
-          <input id='q2' type='range' min='0' max='120' step='1' value='0' aria-label='Draw-off at Snow Town, litres per second'>
+        <div class="ctl">
+          <div class="ctl-head"><span>Snow Town</span><b id="q2Out">0<i>L/s</i></b></div>
+          <input id="q2" type="range" min="0" max="120" step="1" value="0" aria-label="Draw-off at Snow Town, litres per second">
         </div>
 
-        <div class='ctl'>
-          <div class='ctl-head'><span>Total into main</span><b id='qTotOut'>0<i>L/s</i></b></div>
+        <div class="ctl">
+          <div class="ctl-head"><span>Total town draw</span><b id="qTotOut">0<i>L/s</i></b></div>
         </div>
 
-        <div class='ctl'>
-          <div class='ctl-head'><span>Pump flow · Lake Wombat</span><b id='qpOut'>0<i>L/s</i></b></div>
-          <input id='qp' type='range' min='0' max='150' step='1' value='0' aria-label='Pump flow from Lake Wombat Treatment Plant, litres per second'>
+        <div class="ctl">
+          <div class="ctl-head"><span>Pump at Lake Wombat</span><b id="qpOut">0<i>L/s</i></b></div>
+          <input id="qp" type="range" min="0" max="150" step="1" value="0" aria-label="Pump flow injected at Lake Wombat Treatment Plant, litres per second">
         </div>
 
         <div class="ctl">
@@ -274,7 +280,7 @@
         </div>
 
         <div class="actions">
-          <button id="sweep">Sweep flow</button>
+          <button id="sweep">Sweep pump</button>
           <button id="reset" class="ghost">Reset</button>
         </div>
 
@@ -286,45 +292,35 @@
       </div>
 
       <div class="panel">
-        <p class="plabel">Hydraulics — reach 1</p>
-        <dl class="readouts">
-          <div class="ro"><dt>Velocity</dt><dd id="roV">0.00<i>m/s</i></dd></div>
-          <div class="ro"><dt>Reynolds number</dt><dd id="roRe">—</dd></div>
-          <div class="ro"><dt>Friction factor f</dt><dd id="roF">—</dd></div>
-          <div class="ro"><dt>Relative roughness</dt><dd id="roK">—</dd></div>
-          <div class="ro"><dt>Friction slope</dt><dd id="roS">0.00<i>m/km</i></dd></div>
-          <div class="ro"><dt>Total head loss</dt><dd id="roH">0.00<i>m</i></dd></div>
-          <div class="ro"><dt>Velocity head</dt><dd id="roVh">0.00<i>m</i></dd></div>
-          <div class="ro"><dt>Flow regime</dt><dd id="roReg">Static</dd></div>
-        </dl>
+        <p class="plabel">Flow in the common main</p>
         <table>
           <thead><tr><th>Reach</th><th>Flow L/s</th><th>v m/s</th><th>m/km</th><th>Loss m</th></tr></thead>
-          <tbody id='rbody'></tbody>
+          <tbody id="rbody"></tbody>
         </table>
-        <div class='alertbar clear' id='alert'>Static condition — no flow, no friction loss.</div>
+        <div class="alertbar clear" id="balance">Everything still.</div>
       </div>
 
-      <div class='panel'>
-        <p class='plabel'>Pump duty — rising main</p>
-        <dl class='readouts'>
-          <div class='ro'><dt>Static lift</dt><dd id='puLift'>100.0<i>m</i></dd></div>
-          <div class='ro'><dt>Friction head</dt><dd id='puHf'>0.00<i>m</i></dd></div>
-          <div class='ro'><dt>Total dynamic head</dt><dd id='puTdh'>100.0<i>m</i></dd></div>
-          <div class='ro'><dt>Velocity in main</dt><dd id='puV'>0.00<i>m/s</i></dd></div>
-          <div class='ro'><dt>Shaft power</dt><dd id='puKw'>0<i>kW</i></dd></div>
-          <div class='ro'><dt>Specific energy</dt><dd id='puKwh'>—</dd></div>
+      <div class="panel">
+        <p class="plabel">Pump duty — Lake Wombat</p>
+        <dl class="readouts">
+          <div class="ro"><dt>Static lift</dt><dd id="puLift">100.0<i>m</i></dd></div>
+          <div class="ro"><dt>Pump head required</dt><dd id="puTdh">100.0<i>m</i></dd></div>
+          <div class="ro"><dt>Friction in main</dt><dd id="puHf">0.00<i>m</i></dd></div>
+          <div class="ro"><dt>Velocity at pump</dt><dd id="puV">0.00<i>m/s</i></dd></div>
+          <div class="ro"><dt>Shaft power</dt><dd id="puKw">0<i>kW</i></dd></div>
+          <div class="ro"><dt>Specific energy</dt><dd id="puKwh">—</dd></div>
         </dl>
-        <div class='alertbar clear' id='balance'>Pump idle.</div>
       </div>
 
-      <div class='panel'>
-        <p class='plabel'>Residual pressure at offtakes</p>
+      <div class="panel">
+        <p class="plabel">Residual pressure at offtakes</p>
         <table>
           <thead>
             <tr><th>Offtake</th><th>Surface</th><th>HGL</th><th>Residual</th></tr>
           </thead>
           <tbody id="tbody"></tbody>
         </table>
+        <div class="alertbar clear" id="alert">Static condition — no flow, no friction loss.</div>
         <p class="note" id="capacity"></p>
       </div>
     </div>
@@ -332,25 +328,26 @@
 
   <footer>
     DARCY–WEISBACH <code>h<sub>f</sub> = f · (L/D) · v² / 2g</code> with f from COLEBROOK–WHITE <code>1/&radic;f = &minus;2 log<sub>10</sub>( k/3.7D + 2.51/(Re&radic;f) )</code>, solved iteratively.<br>
-    Kinematic viscosity 1.141 × 10<sup>&minus;6</sup> m²/s (water at 15 °C). Internal diameter taken as nominal. Minor losses and reservoir entry loss are neglected. Flow steps down at every offtake, so the HGL is straight within a reach and breaks to a flatter slope past each draw-off.<br>
-    Residual head is measured above finished surface level. Pressure conversion at 9.81 kPa per metre of head.<br>
-    Rising main runs the full 6 000 m from Lake Wombat TP (20.00 m AHD) back to Cloud 9 Reservoir (120.00 m AHD): static lift 100.00 m plus friction, so its grade line falls toward the reservoir in the direction of flow. Shaft power assumes 75 % combined pump and motor efficiency; suction and minor losses are neglected.<br>
-</footer>
+    Kinematic viscosity 1.141 × 10<sup>&minus;6</sup> m²/s (water at 15 °C). Internal diameter taken as nominal. Minor losses and reservoir entry loss are neglected.<br>
+    One common main serves the whole scheme. Cloud 9 Reservoir is a fixed-head boundary at TWL; the pump injects a set flow at CH 6000. Continuity alone fixes the flow in each reach, so raising pump flow first reverses the reach below Snow Town and then works its way back up the main. Head always falls in whichever direction the water is actually travelling.<br>
+    Residual head is measured above finished surface level. Pressure conversion at 9.81 kPa per metre of head. Pump head required is the grade line the pump must hold at CH 6000, above the plant water level; shaft power assumes 75 % combined pump and motor efficiency.<br>
+  </footer>
 </div>
-
 <script>
 /* ══════════════════════════════════════════════════════════
-   1. SCHEME DEFINITION
+   1. SCHEME DEFINITION — one common main, two possible directions
    ══════════════════════════════════════════════════════════ */
-const L      = 5000;      // main length, m
-const TWL    = 120;       // top water level, m AHD
-const COVER  = 2.0;       // pipe centreline below surface, m
-const MINRES = 15;        // minimum residual head, m
-const G      = 9.81;
-const LT     = 6000;      // full corridor out to the treatment plant, m
+const LT     = 6000;      // common main, reservoir to treatment plant, m
+const TWL    = 120;       // Cloud 9 top water level, m AHD
 const TPCH   = 6000;      // Lake Wombat Treatment Plant chainage, m
 const TPLVL  = 20;        // treatment plant water level, m AHD
+const COVER  = 2.0;       // pipe centreline below surface, m
+const MINRES = 15;        // minimum residual head, m
 const PEFF   = 0.75;      // combined pump and motor efficiency
+const G      = 9.81;
+
+const COL_GRAV = '#0B7F9E';   // water running away from Cloud 9
+const COL_PUMP = '#6E4B9E';   // water running back toward Cloud 9
 
 const PROFILE = [
   [0,116],[400,110],[800,101],[1200,92],[1600,84],[2000,77],
@@ -364,11 +361,13 @@ const OFFTAKES = [
   {name:'Snow Town',           ch:5000}
 ];
 
+/* Node chainages: reservoir, the three offtakes, then the plant. */
+const NODES = [0].concat(OFFTAKES.map(o=>o.ch)).concat([TPCH]);
+
 let DEMAND = [0,0,0];                 // draw-off at each offtake, L/s
+let QP = 0;                           // flow injected by the pump at CH 6000, L/s
 let DN = 300, KS = 0.06;              // KS = absolute roughness, mm
-const QMAX = 120;                     // slider ceiling per offtake, L/s
 const PEAK = [30,25,45];              // demand pattern used by Sweep, L/s
-let QP = 0;                           // pump flow from Lake Wombat TP, L/s
 let showStatic = true, showBand = true, showEgl = false;
 
 /* ══════════════════════════════════════════════════════════
@@ -409,54 +408,52 @@ function frictionFactor(Re, relK){
   return f;
 }
 
-/** Darcy–Weisbach:  h_f = f · (L/D) · v² / 2g */
-function hydraulics(qLps, dn, ks){
-  const D = dn/1000, v = velocity(qLps, dn);
-  const Re = v*D/NU, relK = (ks/1000)/D;
-  const f  = frictionFactor(Re, relK);
-  return {v, Re, f, relK, vh: v*v/(2*G),
-          hf: qLps<=0 ? 0 : f*(L/D)*v*v/(2*G)};
+/** Signed flow in every reach. Positive runs away from Cloud 9, toward the plant.
+ *  One fixed-head reservoir and one fixed-flow pump, so continuity alone fixes it. */
+function reachFlows(dem, qp){
+  const n = dem.length;                  // 3 offtakes -> 4 reaches
+  const q = new Array(n+1);
+  q[n] = -qp;                            // the pump pushes back up the main
+  for (let j=n; j>=1; j--) q[j-1] = dem[j-1] + q[j];
+  return q;
 }
 
-/** Reach boundaries: the reservoir, then every offtake. */
-const CHS = [0].concat(OFFTAKES.map(o=>o.ch));
-
-/** A reach carries everything still drawn downstream of it. */
-function reachFlows(dem){
-  return OFFTAKES.map((o,i)=> dem.slice(i).reduce((a,b)=>a+b,0));
-}
-
-/** Head loss reach by reach, stepping the flow down at every offtake. */
-function reaches(dem, dn, ks){
+/** Walk the grade line out from the reservoir. Head falls whichever way the water goes. */
+function reaches(dem, qp, dn, ks){
+  const qs = reachFlows(dem, qp);
   const D = dn/1000, relK = (ks/1000)/D;
   let head = TWL;
-  return reachFlows(dem).map((q,i)=>{
-    const from = CHS[i], to = CHS[i+1], len = to-from;
-    const v  = velocity(q, dn);
-    const Re = v*D/NU;
-    const f  = frictionFactor(Re, relK);
-    const hf = q<=0 ? 0 : f*(len/D)*v*v/(2*G);
-    const r  = {i, from, to, len, q, v, Re, relK, f, hf, vh:v*v/(2*G), hStart:head, hEnd:head-hf};
-    head -= hf;
+  return qs.map((q,i)=>{
+    const from = NODES[i], to = NODES[i+1], len = to-from;
+    const mag = Math.abs(q);
+    const v   = velocity(mag, dn);
+    const Re  = v*D/NU;
+    const f   = frictionFactor(Re, relK);
+    const hf  = mag <= 0.0001 ? 0 : f*(len/D)*v*v/(2*G);
+    const dir = q > 0.0001 ? 1 : (q < -0.0001 ? -1 : 0);
+    const drop = dir < 0 ? -hf : hf;
+    const r = {i, from, to, len, q, mag, v, Re, relK, f, hf, dir,
+               vh: v*v/(2*G), hStart: head, hEnd: head - drop};
+    head -= drop;
     return r;
   });
 }
 
-/** Piecewise HGL: straight inside a reach, kinked at every draw-off. */
+/** Piecewise HGL: straight inside a reach, kinked at every node. */
 function hglFn(rs){
   return ch=>{
     if (ch <= 0) return rs[0].hStart;
-    for (const r of rs) if (ch <= r.to) return r.hStart - (r.hStart-r.hEnd)*(ch-r.from)/r.len;
+    for (const r of rs) if (ch <= r.to) return r.hStart + (r.hEnd-r.hStart)*(ch-r.from)/r.len;
     return rs[rs.length-1].hEnd;
   };
 }
 
-/** Scale the present demand pattern up until an offtake falls to MINRES. */
+/** Gravity-only capacity: scale the demand pattern with the pump off. */
 function patternCapacity(dn, ks){
   const base = DEMAND.reduce((a,b)=>a+b,0) > 0 ? DEMAND.slice() : PEAK.slice();
   const unit = base.reduce((a,b)=>a+b,0);
   const worstAt = s=>{
-    const h = hglFn(reaches(base.map(q=>q*s), dn, ks));
+    const h = hglFn(reaches(base.map(q=>q*s), 0, dn, ks));
     let m = Infinity, gov = '';
     OFFTAKES.forEach(o=>{ const res = h(o.ch)-ground(o.ch); if (res < m){ m = res; gov = o.name; } });
     return {m, gov};
@@ -470,24 +467,19 @@ function patternCapacity(dn, ks){
   return {q: unit*lo, gov: worstAt(lo).gov};
 }
 
-/** Rising main: static lift from the plant to TWL, plus friction over the full corridor. */
-function pumpDuty(qp, dn, ks){
-  const D = dn/1000, relK = (ks/1000)/D;
-  const v  = velocity(qp, dn);
-  const Re = v*D/NU;
-  const f  = frictionFactor(Re, relK);
-  const hf = qp<=0 ? 0 : f*(LT/D)*v*v/(2*G);
-  const lift = TWL - TPLVL;
-  const tdh  = lift + hf;
-  const kw   = qp<=0 ? 0 : (1000*G*(qp/1000)*tdh)/1000/PEFF;
+/** What the pump must generate: the grade line it has to hold at CH 6000. */
+function pumpDuty(rs, qp){
+  const last = rs[rs.length-1];
+  const head = last.hEnd;
+  const tdh  = head - TPLVL;
+  const kw    = qp<=0 ? 0 : (1000*G*(qp/1000)*tdh)/1000/PEFF;
   const kwhML = qp<=0 ? 0 : kw*1000/(qp*3.6);
-  return {q:qp, v, Re, f, relK, hf, lift, tdh, kw, kwhML,
-          hgl: ch=> TWL + hf*(ch/LT)};
+  return {q:qp, head, tdh, staticLift: TWL - TPLVL, v:last.v, kw, kwhML};
 }
 
 /** Everything the views need, for the current settings. */
 function solve(){
-  const rs  = reaches(DEMAND, DN, KS);
+  const rs  = reaches(DEMAND, QP, DN, KS);
   const hgl = hglFn(rs);
   const up  = rs[0];
   const hf  = rs.reduce((a,r)=>a+r.hf, 0);
@@ -497,23 +489,27 @@ function solve(){
   });
   return {reaches:rs, hgl, hf, rows,
           qTotal: DEMAND.reduce((a,b)=>a+b,0),
+          qRes: rs[0].q,
+          reversed: rs.filter(r=>r.dir < 0).length,
           v:up.v, Re:up.Re, f:up.f, relK:up.relK, vh:up.vh,
           cap: patternCapacity(DN, KS),
-          pump: pumpDuty(QP, DN, KS)};
+          pump: pumpDuty(rs, QP)};
 }
 
 /* ══════════════════════════════════════════════════════════
    3. LONG SECTION (SVG)
    ══════════════════════════════════════════════════════════ */
 const svg = document.getElementById('section');
-const PX0=60, PX1=866, PY0=20, PY1=392, EMIN=10;
-let EMAX = 200;                       // top of the elevation axis, rescaled per frame
+const PX0=60, PX1=866, PY0=20, PY1=384, EMIN=10;
+let EMAX = 160;
 const sx = ch => PX0 + (ch/LT)*(PX1-PX0);
 const sy = e  => PY1 - ((e-EMIN)/(EMAX-EMIN))*(PY1-PY0);
 
 function drawSection(S){
   const p = [];
-  EMAX = Math.max(140, Math.ceil((TWL + S.pump.hf + 12)/20)*20);
+  let hmax = TWL;
+  S.reaches.forEach(r=>{ hmax = Math.max(hmax, r.hStart, r.hEnd); });
+  EMAX = Math.max(140, Math.ceil((hmax + 12)/20)*20);
   const estep = EMAX > 300 ? 50 : 20;
 
   p.push(`<defs>
@@ -533,7 +529,7 @@ function drawSection(S){
     p.push(`<line x1="${sx(ch)}" y1="${PY1}" x2="${sx(ch)}" y2="${PY1+5}" stroke="#425A66" stroke-width="1"/>`);
     p.push(`<text x="${sx(ch)}" y="${PY1+18}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#7C919B">${ch}</text>`);
   }
-  p.push(`<text x="${(PX0+PX1)/2}" y="${PY1+32}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7C919B" letter-spacing="1.6">CHAINAGE (m)</text>`);
+  p.push(`<text x="${(PX0+PX1)/2}" y="${PY1+58}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7C919B" letter-spacing="1.6">CHAINAGE (m)</text>`);
 
   // ---- ground body ----
   let gpath = `M ${sx(0)} ${sy(ground(0))}`;
@@ -556,7 +552,7 @@ function drawSection(S){
       }
       run = [];
     };
-    for (let ch=0;ch<=L;ch+=25){
+    for (let ch=0;ch<=LT;ch+=25){
       if (S.hgl(ch) > ground(ch)) run.push(ch); else flush();
     }
     flush();
@@ -569,33 +565,43 @@ function drawSection(S){
   p.push(`<line x1="${rx-30}" y1="${ry}" x2="${rx+10}" y2="${ry}" stroke="#0B7F9E" stroke-width="2"/>`);
   p.push(`<text x="${rx-9}" y="${ry-11}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#0B7F9E">TWL 120.00</text>`);
 
-  // ---- pipeline ----
+  // ---- the one common main ----
   let ppath = `M ${sx(0)} ${sy(pipeElev(0))}`;
-  for (let ch=0;ch<=L;ch+=50) ppath += ` L ${sx(ch)} ${sy(pipeElev(ch))}`;
+  for (let ch=0;ch<=LT;ch+=50) ppath += ` L ${sx(ch)} ${sy(pipeElev(ch))}`;
   p.push(`<path d="${ppath}" fill="none" stroke="#16232B" stroke-width="3.4" stroke-linecap="round"/>`);
   p.push(`<path d="${ppath}" fill="none" stroke="#8FA2AB" stroke-width="1.2"/>`);
 
   // ---- static HGL ghost ----
   if (showStatic){
-    p.push(`<line x1="${sx(0)}" y1="${sy(TWL)}" x2="${sx(L)}" y2="${sy(TWL)}" stroke="#0B7F9E" stroke-width="1.4" stroke-dasharray="2 5" opacity="0.65"/>`);
+    p.push(`<line x1="${sx(0)}" y1="${sy(TWL)}" x2="${sx(LT)}" y2="${sy(TWL)}" stroke="#0B7F9E" stroke-width="1.4" stroke-dasharray="2 5" opacity="0.65"/>`);
     p.push(`<text x="${PX1+6}" y="${sy(TWL)+4}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#0B7F9E" opacity="0.85">STATIC HGL</text>`);
   }
 
   // ---- EGL ----
   if (showEgl && S.hf > 0){
     S.reaches.forEach(r=>{
-      p.push(`<line x1='${sx(r.from)}' y1='${sy(r.hStart+r.vh)}' x2='${sx(r.to)}' y2='${sy(r.hEnd+r.vh)}' stroke='#16232B' stroke-width='1.2' stroke-dasharray='6 4' opacity='0.8'/>`);
+      p.push(`<line x1="${sx(r.from)}" y1="${sy(r.hStart+r.vh)}" x2="${sx(r.to)}" y2="${sy(r.hEnd+r.vh)}" stroke="#16232B" stroke-width="1.2" stroke-dasharray="6 4" opacity="0.8"/>`);
     });
-    p.push(`<text x='${sx(700)}' y='${sy(S.hgl(700)+S.reaches[0].vh)-6}' font-family='IBM Plex Mono, monospace' font-size='9.5' fill='#425A66'>EGL</text>`);
   }
 
-  // ---- HGL ----
-  let hglPath = `M ${sx(0)} ${sy(TWL)}`;
-  S.reaches.forEach(r=>{ hglPath += ` L ${sx(r.to)} ${sy(r.hEnd)}`; });
-  p.push(`<path d='${hglPath}' fill='none' stroke='#0B7F9E' stroke-width='3.2' stroke-linejoin='round'/>`);
-  S.reaches.slice(0,-1).forEach(r=>{ p.push(`<circle cx='${sx(r.to)}' cy='${sy(r.hEnd)}' r='3.2' fill='#0B7F9E'/>`); });
-  const midCh = 2000;
-  p.push(`<text x="${sx(midCh)}" y="${sy(S.hgl(midCh))-9}" font-family="Barlow Condensed, sans-serif" font-size="15" font-weight="700" fill="#0B7F9E" letter-spacing="1.4">HYDRAULIC GRADE LINE</text>`);
+  // ---- HGL, one segment per reach, coloured by which way the water is going ----
+  S.reaches.forEach(r=>{
+    const col = r.dir < 0 ? COL_PUMP : COL_GRAV;
+    p.push(`<line x1="${sx(r.from)}" y1="${sy(r.hStart)}" x2="${sx(r.to)}" y2="${sy(r.hEnd)}" stroke="${col}" stroke-width="3.2" stroke-linecap="round"/>`);
+  });
+  S.reaches.slice(0,-1).forEach(r=>{
+    p.push(`<circle cx="${sx(r.to)}" cy="${sy(r.hEnd)}" r="3.2" fill="${r.dir<0?COL_PUMP:COL_GRAV}"/>`);
+  });
+
+  // ---- direction arrows on the pipe ----
+  S.reaches.forEach(r=>{
+    if (r.dir === 0) return;
+    const mid = (r.from + r.to)/2;
+    const y = sy(pipeElev(mid)) + 16;
+    const col = r.dir < 0 ? COL_PUMP : COL_GRAV;
+    const a = sx(mid) - 17*r.dir, b = sx(mid) + 17*r.dir;
+    p.push(`<path d="M ${a} ${y} L ${b} ${y} m ${-8*r.dir} -4.5 l ${8*r.dir} 4.5 l ${-8*r.dir} 4.5" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`);
+  });
 
   // ---- offtake markers ----
   S.rows.forEach(r=>{
@@ -604,36 +610,32 @@ function drawSection(S){
     p.push(`<line x1="${x}" y1="${yg}" x2="${x}" y2="${Math.min(yh,yg)}" stroke="${col}" stroke-width="2"/>`);
     p.push(`<line x1="${x-5}" y1="${yh}" x2="${x+5}" y2="${yh}" stroke="${col}" stroke-width="2"/>`);
     p.push(`<circle cx="${x}" cy="${yg}" r="3.4" fill="${col}"/>`);
-    const anchor = r.ch >= L-200 ? 'end' : 'middle';
-    const dx = r.ch >= L-200 ? -8 : 0;
-    const ty = Math.min(yh,yg) - 10;
-    p.push(`<text x="${x+dx}" y="${ty}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="${col}">${r.residual.toFixed(1)} m</text>`);
-    p.push(`<text x="${x+dx}" y="${ty+11}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="${col}" opacity="0.8">${Math.round(r.kpa)} kPa</text>`);
-    p.push(`<text x="${x}" y="${PY1+18}" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="12" font-weight="600" fill="#425A66" letter-spacing=".6">${r.name.toUpperCase()}</text>`);
+    const ty = Math.min(yh,yg) - 22;
+    p.push(`<text x="${x}" y="${ty}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="${col}">${r.residual.toFixed(1)} m</text>`);
+    p.push(`<text x="${x}" y="${ty+11}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="${col}" opacity="0.8">${Math.round(r.kpa)} kPa</text>`);
+    p.push(`<text x="${x}" y="${PY1+34}" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="12" font-weight="600" fill="#425A66" letter-spacing=".6">${r.name.toUpperCase()}</text>`);
   });
 
-  // ---- rising main, treatment plant and pumped HGL ----
-  let rpath = `M ${sx(0)} ${sy(pipeElev(0)-1.4)}`;
-  for (let ch=0;ch<=LT;ch+=50) rpath += ` L ${sx(ch)} ${sy(pipeElev(ch)-1.4)}`;
-  p.push(`<path d='${rpath}' fill='none' stroke='#6E4B9E' stroke-width='2.6' stroke-linecap='round'/>`);
-
+  // ---- treatment plant and pump station ----
   const P = S.pump;
   const tx = sx(TPCH), ty = sy(TPLVL);
-  p.push(`<rect x='${tx-34}' y='${ty-30}' width='34' height='30' fill='#DCE4E7' stroke='#16232B' stroke-width='1.6'/>`);
-  const pumpCol = P.q > 0 ? '#6E4B9E' : '#8FA2AB';
-  p.push(`<circle cx='${tx-17}' cy='${ty-15}' r='8' fill='${pumpCol}'/>`);
-  p.push(`<path d='M ${tx-21} ${ty-20} L ${tx-10} ${ty-15} L ${tx-21} ${ty-10} Z' fill='#FFFFFF'/>`);
-  p.push(`<text x='${tx-17}' y='${ty-38}' text-anchor='middle' font-family='Barlow Condensed, sans-serif' font-size='12' font-weight='600' fill='#425A66' letter-spacing='.6'>LAKE WOMBAT TP</text>`);
-  p.push(`<text x='${tx-17}' y='${PY1+31}' text-anchor='middle' font-family='Barlow Condensed, sans-serif' font-size='12' font-weight='600' fill='#6E4B9E' letter-spacing='.6'>PUMP STATION</text>`);
+  p.push(`<rect x="${tx-34}" y="${ty-30}" width="34" height="30" fill="#DCE4E7" stroke="#16232B" stroke-width="1.6"/>`);
+  p.push(`<circle cx="${tx-17}" cy="${ty-15}" r="8" fill="${P.q>0?COL_PUMP:'#8FA2AB'}"/>`);
+  p.push(`<path d="M ${tx-21} ${ty-20} L ${tx-10} ${ty-15} L ${tx-21} ${ty-10} Z" fill="#FFFFFF"/>`);
+  p.push(`<text x="${tx-17}" y="${ty-38}" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="12" font-weight="600" fill="#425A66" letter-spacing=".6">LAKE WOMBAT TP</text>`);
+  p.push(`<text x="${tx-17}" y="${PY1+34}" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="12" font-weight="600" fill="${P.q>0?COL_PUMP:'#7C919B'}" letter-spacing=".6">PUMP</text>`);
 
   if (P.q > 0){
-    const ay = sy(TWL + P.hf*0.40) - 4;
-    p.push(`<line x1='${sx(0)}' y1='${sy(TWL)}' x2='${sx(LT)}' y2='${sy(TWL+P.hf)}' stroke='#6E4B9E' stroke-width='3' stroke-dasharray='10 4'/>`);
-    p.push(`<line x1='${tx}' y1='${sy(TPLVL)}' x2='${tx}' y2='${sy(TWL+P.hf)}' stroke='#6E4B9E' stroke-width='1.6' stroke-dasharray='3 3'/>`);
-    p.push(`<text x='${tx-6}' y='${sy(TWL+P.hf)-9}' text-anchor='end' font-family='IBM Plex Mono, monospace' font-size='11.5' font-weight='600' fill='#6E4B9E'>TDH ${P.tdh.toFixed(1)} m</text>`);
-    p.push(`<path d='M ${sx(3050)} ${ay} L ${sx(2350)} ${ay} m 9 -5 l -9 5 l 9 5' fill='none' stroke='#6E4B9E' stroke-width='2'/>`);
-    p.push(`<text x='${sx(3150)}' y='${ay+5}' font-family='Barlow Condensed, sans-serif' font-size='15' font-weight='700' fill='#6E4B9E' letter-spacing='1.4'>PUMPED HGL — RISING MAIN</text>`);
+    p.push(`<line x1="${tx}" y1="${sy(TPLVL)}" x2="${tx}" y2="${sy(P.head)}" stroke="${COL_PUMP}" stroke-width="1.6" stroke-dasharray="3 3"/>`);
+    p.push(`<text x="${PX1-4}" y="${PY0+14}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="${COL_PUMP}">PUMP HEAD ${P.tdh.toFixed(1)} m  ·  HGL ${P.head.toFixed(1)} m AHD</text>`);
   }
+
+  // ---- legend ----
+  const ly = PY0 + 10;
+  p.push(`<line x1="${PX0+8}" y1="${ly}" x2="${PX0+34}" y2="${ly}" stroke="${COL_GRAV}" stroke-width="3.2"/>`);
+  p.push(`<text x="${PX0+40}" y="${ly+4}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#425A66">FLOW AWAY FROM CLOUD 9</text>`);
+  p.push(`<line x1="${PX0+218}" y1="${ly}" x2="${PX0+244}" y2="${ly}" stroke="${COL_PUMP}" stroke-width="3.2"/>`);
+  p.push(`<text x="${PX0+250}" y="${ly+4}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#425A66">FLOW BACK TOWARD CLOUD 9</text>`);
 
   svg.innerHTML = p.join('');
 }
@@ -653,9 +655,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xE5EBED);
-scene.fog = new THREE.Fog(0xE5EBED, 250, 600);
+scene.fog = new THREE.Fog(0xE5EBED, 250, 620);
 
-const camera = new THREE.PerspectiveCamera(38, 2, 0.5, 760);
+const camera = new THREE.PerspectiveCamera(38, 2, 0.5, 800);
 const target = new THREE.Vector3(60, 12, 0);
 let cam = {r:132, theta:0.30, phi:1.20};
 function placeCamera(){
@@ -677,7 +679,7 @@ scene.add(sun);
 const trench = zm => 3.5*Math.exp(-Math.pow(zm/28,2));
 const surf = (ch, zm) => ground(ch) - 0.00008*zm*zm - trench(zm);
 
-const NX = 200, NZ = 44;
+const NX = 220, NZ = 44;
 function buildTerrain(){
   const top = [], idx = [];
   for (let j=0;j<=NZ;j++){
@@ -697,7 +699,6 @@ function buildTerrain(){
   g.computeVertexNormals();
   scene.add(new THREE.Mesh(g, new THREE.MeshLambertMaterial({color:0x93A08D})));
 
-  // skirt: two long sides + two ends, dropped to base
   const baseY = 0, sv = [], si = [];
   const edge = [];
   for (let i=0;i<=NX;i++){ const ch=(i/NX)*LT; edge.push([X(ch), Y(surf(ch,-ZHALF/XS)), -ZHALF]); }
@@ -712,7 +713,6 @@ function buildTerrain(){
     }
   }
   strip(edge, true); strip(edge2, false);
-  // ends
   const endAt = (ch, flip) => {
     const o = sv.length/3, list=[];
     for (let j=0;j<=NZ;j++){ const z=-ZHALF+(j/NZ)*2*ZHALF; list.push([X(ch), Y(surf(ch,z/XS)), z]); }
@@ -731,46 +731,18 @@ function buildTerrain(){
 }
 buildTerrain();
 
-// --- pipeline ---
+// --- the one common main ---
 (function(){
   const pts = [];
-  for (let ch=0; ch<=L; ch+=50) pts.push(new THREE.Vector3(X(ch), Y(pipeElev(ch)), 0));
+  for (let ch=0; ch<=LT; ch+=50) pts.push(new THREE.Vector3(X(ch), Y(pipeElev(ch)), 0));
   const curve = new THREE.CatmullRomCurve3(pts);
   scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(curve, 160, 0.24, 10, false),
+    new THREE.TubeGeometry(curve, 200, 0.24, 10, false),
     new THREE.MeshLambertMaterial({color:0x24333B})
   ));
 })();
 
-// --- rising main back to the reservoir ---
-(function(){
-  const pts = [];
-  for (let ch=0; ch<=LT; ch+=50) pts.push(new THREE.Vector3(X(ch), Y(pipeElev(ch)-1.4), 1.2));
-  const curve = new THREE.CatmullRomCurve3(pts);
-  scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(curve, 190, 0.22, 10, false),
-    new THREE.MeshLambertMaterial({color:0x6E4B9E})
-  ));
-})();
-
-// --- Lake Wombat treatment plant and pump station ---
-(function(){
-  const base = Y(surf(TPCH, 0));
-  const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.6,Y(TPLVL)+0.35-base,26),
-    new THREE.MeshLambertMaterial({color:0xC9D3D7}));
-  tank.position.set(X(TPCH), (Y(TPLVL)+0.35+base)/2, 0);
-  scene.add(tank);
-  const water = new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,0.06,26),
-    new THREE.MeshBasicMaterial({color:0x17B6D9}));
-  water.position.set(X(TPCH), Y(TPLVL)+0.2, 0);
-  scene.add(water);
-  const shed = new THREE.Mesh(new THREE.BoxGeometry(1.0,0.8,1.0),
-    new THREE.MeshLambertMaterial({color:0x6E4B9E}));
-  shed.position.set(X(TPCH)-2.4, base+0.4, 1.2);
-  scene.add(shed);
-})();
-
-// --- reservoir ---
+// --- Cloud 9 reservoir ---
 (function(){
   const base = 114, top = 121.5;
   const tank = new THREE.Mesh(
@@ -787,26 +759,44 @@ buildTerrain();
   scene.add(water);
 })();
 
-// --- town ---
+// --- Snow Town ---
 (function(){
   const mat = new THREE.MeshLambertMaterial({color:0xB9BEB4});
+  const seed = [0.13,0.71,0.42,0.88,0.05,0.56,0.34,0.97,0.22,0.63,0.48,0.79,0.11,0.66,0.29,0.84];
   for (let i=0;i<16;i++){
-    const ch = 4450 + Math.random()*550;
-    const zm = (Math.random()-0.5)*380;
-    const h = 0.5 + Math.random()*0.9;
-    const b = new THREE.Mesh(new THREE.BoxGeometry(0.45,h,0.45), mat);
+    const ch = 4450 + seed[i]*550;
+    const zm = (seed[(i*7)%16]-0.5)*380;
+    const h  = 0.5 + seed[(i*5)%16]*0.9;
+    const b  = new THREE.Mesh(new THREE.BoxGeometry(0.45,h,0.45), mat);
     b.position.set(X(ch), Y(surf(ch,zm))+h/2, zm*XS);
     scene.add(b);
   }
 })();
 
-// --- hydraulic grade surface (straight line ⇒ a tilted plane) ---
+// --- Lake Wombat treatment plant and pump station ---
+const pumpShed = (function(){
+  const base = Y(surf(TPCH, 0));
+  const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.6,Math.max(0.3, Y(TPLVL)+0.35-base),26),
+    new THREE.MeshLambertMaterial({color:0xC9D3D7}));
+  tank.position.set(X(TPCH), (Y(TPLVL)+0.35+base)/2, 0);
+  scene.add(tank);
+  const water = new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,0.06,26),
+    new THREE.MeshBasicMaterial({color:0x17B6D9}));
+  water.position.set(X(TPCH), Y(TPLVL)+0.2, 0);
+  scene.add(water);
+  const shed = new THREE.Mesh(new THREE.BoxGeometry(1.0,0.8,1.0),
+    new THREE.MeshLambertMaterial({color:0x8FA2AB}));
+  shed.position.set(X(TPCH)-2.4, base+0.4, 1.4);
+  scene.add(shed);
+  return shed;
+})();
+
+// --- grade surface, one tilted panel per reach ---
 const sheetGeo = new THREE.PlaneGeometry(1, ZHALF*1.6, 1, 1);
 sheetGeo.rotateX(-Math.PI/2); sheetGeo.translate(0.5, 0, 0);
 const lineGeo = new THREE.BoxGeometry(1, 0.16, 0.16); lineGeo.translate(0.5, 0, 0);
 
-// one tilted panel per reach — the grade surface now breaks at every offtake
-const hglParts = OFFTAKES.map(()=>{
+const hglParts = NODES.slice(1).map(()=>{
   const g  = new THREE.Group();
   const sh = new THREE.Mesh(sheetGeo.clone(), new THREE.MeshBasicMaterial({
     color:0x17B6D9, transparent:true, opacity:0.26, side:THREE.DoubleSide, depthWrite:false
@@ -817,15 +807,6 @@ const hglParts = OFFTAKES.map(()=>{
   return {g, sh, ln};
 });
 
-// --- pumped grade surface for the rising main ---
-const pumpGroup = new THREE.Group();
-const pumpSheet = new THREE.Mesh(sheetGeo.clone(), new THREE.MeshBasicMaterial({
-  color:0x6E4B9E, transparent:true, opacity:0.20, side:THREE.DoubleSide, depthWrite:false
-}));
-const pumpLine = new THREE.Mesh(lineGeo.clone(), new THREE.MeshBasicMaterial({color:0x6E4B9E}));
-pumpGroup.add(pumpSheet, pumpLine);
-scene.add(pumpGroup);
-
 // --- static HGL ghost plane ---
 const staticGroup = new THREE.Group();
 const ghost = new THREE.Mesh(sheetGeo.clone(), new THREE.MeshBasicMaterial({
@@ -834,7 +815,7 @@ const ghost = new THREE.Mesh(sheetGeo.clone(), new THREE.MeshBasicMaterial({
 const ghostLine = new THREE.Mesh(lineGeo.clone(), new THREE.MeshBasicMaterial({
   color:0x0B7F9E, transparent:true, opacity:0.45
 }));
-ghost.scale.x = X(L); ghostLine.scale.x = X(L);
+ghost.scale.x = X(LT); ghostLine.scale.x = X(LT);
 staticGroup.add(ghost, ghostLine);
 staticGroup.position.set(0, Y(TWL), 0);
 scene.add(staticGroup);
@@ -860,7 +841,7 @@ const piezos = OFFTAKES.map(o=>{
 const labelBox = document.getElementById('labels');
 const labelDefs = [
   {id:'res', el:null, text:()=>'CLOUD 9 RESERVOIR', pos:()=>new THREE.Vector3(X(0), Y(122.5), 0), cls:'lab'},
-  {id:'tp', el:null, text:()=>'LAKE WOMBAT TP', pos:()=>new THREE.Vector3(X(TPCH), Y(TPLVL)+2.6, 0), cls:'lab'},
+  {id:'tp',  el:null, text:()=>'LAKE WOMBAT TP',    pos:()=>new THREE.Vector3(X(TPCH), Y(TPLVL)+2.6, 0), cls:'lab'},
   ...OFFTAKES.map((o,i)=>({
     id:'o'+i, el:null,
     text:S=>`${o.name.toUpperCase()}  ${S.rows[i].residual.toFixed(1)} m`,
@@ -893,18 +874,11 @@ function updateScene(S){
     const len = Math.hypot(dx, dy);
     part.sh.scale.x = len;
     part.ln.scale.x = len;
+    part.sh.material.color.setHex(r.dir < 0 ? 0x9B7DC7 : 0x17B6D9);
+    part.ln.material.color.setHex(r.dir < 0 ? 0x6E4B9E : 0x0B7F9E);
   });
-  const P = S.pump;
-  pumpGroup.visible = P.q > 0;
-  if (P.q > 0){
-    const x0 = X(0), y0 = Y(TWL);
-    const dx = X(LT)-x0, dy = Y(TWL+P.hf)-y0;
-    pumpGroup.position.set(x0, y0, 1.2);
-    pumpGroup.rotation.z = Math.atan2(dy, dx);
-    const plen = Math.hypot(dx, dy);
-    pumpSheet.scale.x = plen; pumpLine.scale.x = plen;
-  }
   staticGroup.visible = showStatic && S.hf > 0.01;
+  pumpShed.material.color.setHex(S.pump.q > 0 ? 0x6E4B9E : 0x8FA2AB);
 
   piezos.forEach((p,i)=>{
     const top = Y(S.rows[i].hgl);
@@ -945,7 +919,7 @@ canvas.addEventListener('pointermove', e=>{
 });
 canvas.addEventListener('wheel', e=>{
   e.preventDefault();
-  cam.r = Math.min(280, Math.max(34, cam.r + e.deltaY*0.09));
+  cam.r = Math.min(300, Math.max(34, cam.r + e.deltaY*0.09));
   render();
 }, {passive:false});
 
@@ -960,17 +934,46 @@ function updatePanel(S){
   el('qpOut').innerHTML = `${QP}<i>L/s</i>`;
   el('dOut').textContent = 'DN'+DN;
   el('cOut').textContent = `k = ${KS} mm`;
-  el('roV').innerHTML  = `${S.v.toFixed(2)}<i>m/s</i>`;
-  el('roRe').innerHTML = S.Re > 0 ? `${(S.Re/1000).toFixed(0)}<i>×10³</i>` : '—';
-  el('roF').innerHTML  = S.f > 0 ? S.f.toFixed(4) : '—';
-  el('roK').innerHTML  = `${(S.relK*1000).toFixed(3)}<i>×10⁻³</i>`;
-  el('roS').innerHTML  = `${(S.reaches[0].hf/S.reaches[0].len*1000).toFixed(2)}<i>m/km</i>`;
-  el('roH').innerHTML  = `${S.hf.toFixed(2)}<i>m</i>`;
-  el('roVh').innerHTML = `${S.vh.toFixed(3)}<i>m</i>`;
-  el('roReg').innerHTML = S.Re === 0 ? 'Static'
-                        : S.Re < 2000 ? 'Laminar'
-                        : S.Re < 4000 ? 'Transitional'
-                        : 'Turbulent';
+
+  el('rbody').innerHTML = S.reaches.map(r=>{
+    const arrow = r.dir > 0 ? '&rarr;' : (r.dir < 0 ? '&larr;' : '&mdash;');
+    const cls   = r.dir < 0 ? 'rev' : (r.dir > 0 ? 'fwd' : '');
+    const slope = r.len > 0 ? (r.hf/r.len*1000).toFixed(2) : '0.00';
+    return `<tr>
+      <td>Reach ${r.i+1}<br><span class="chip" style="color:#7C919B">CH ${r.from} – ${r.to}</span></td>
+      <td><span class="${cls}">${arrow}</span> ${r.mag.toFixed(0)}</td>
+      <td>${r.v.toFixed(2)}</td>
+      <td>${slope}</td>
+      <td>${r.hf.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+
+  const P = S.pump;
+  el('puLift').innerHTML = `${P.staticLift.toFixed(1)}<i>m</i>`;
+  el('puTdh').innerHTML  = `${P.tdh.toFixed(1)}<i>m</i>`;
+  el('puHf').innerHTML   = `${S.hf.toFixed(2)}<i>m</i>`;
+  el('puV').innerHTML    = `${P.v.toFixed(2)}<i>m/s</i>`;
+  el('puKw').innerHTML   = `${P.kw.toFixed(0)}<i>kW</i>`;
+  el('puKwh').innerHTML  = P.q > 0 ? `${P.kwhML.toFixed(0)}<i>kWh/ML</i>` : '—';
+
+  const bal = el('balance');
+  const res = S.qRes;
+  if (QP === 0 && S.qTotal === 0){
+    bal.className = 'alertbar clear';
+    bal.innerHTML = 'Everything is still. The HGL is <b>flat at TWL 120.00</b> along the whole main.';
+  } else if (QP === 0){
+    bal.className = 'alertbar clear';
+    bal.innerHTML = `Pump off. Cloud 9 supplies all <b>${S.qTotal} L/s</b>, and the main below Snow Town is a dead leg.`;
+  } else if (res > 0.5){
+    bal.className = 'alertbar pumped';
+    bal.innerHTML = `Pump injects <b>${QP} L/s</b>; Cloud 9 still supplies <b>${res.toFixed(0)} L/s</b>. Flow has reversed in the lower <b>${S.reversed}</b> reach${S.reversed===1?'':'es'}.`;
+  } else if (res >= -0.5){
+    bal.className = 'alertbar pumped';
+    bal.innerHTML = `Balanced. The pump exactly covers the town's <b>${S.qTotal} L/s</b>, so Cloud 9 neither fills nor drains and reach 1 is dead.`;
+  } else {
+    bal.className = 'alertbar pumped';
+    bal.innerHTML = `Pump overtakes demand — <b>${Math.abs(res).toFixed(0)} L/s</b> runs back into Cloud 9. Flow is reversed along the whole main and every offtake gains pressure.`;
+  }
 
   el('tbody').innerHTML = S.rows.map(r=>`
     <tr class="${r.ok?'':'fail'}">
@@ -980,23 +983,14 @@ function updatePanel(S){
       <td>${r.residual.toFixed(1)} m<br><span class="chip">${Math.round(r.kpa)} kPa</span></td>
     </tr>`).join('');
 
-  el('rbody').innerHTML = S.reaches.map((r,i)=>`
-    <tr>
-      <td>Reach ${i+1}<br><span class='chip' style='color:#7C919B'>CH ${r.from} – ${r.to}</span></td>
-      <td>${r.q}</td>
-      <td>${r.v.toFixed(2)}</td>
-      <td>${(r.hf/r.len*1000).toFixed(2)}</td>
-      <td>${r.hf.toFixed(2)}</td>
-    </tr>`).join('');
-
   const worst = S.rows.reduce((a,b)=> b.residual<a.residual ? b : a);
   const a = el('alert');
-  if (S.qTotal === 0){
+  if (QP === 0 && S.qTotal === 0){
     a.className = 'alertbar clear';
-    a.innerHTML = 'Static condition — the HGL is <b>flat at TWL 120.00</b>. No flow, no friction, no slope.';
+    a.innerHTML = 'Static condition — no flow, no friction, no slope.';
   } else if (S.rows.some(r=>r.hgl < pipeElev(r.ch))){
     a.className = 'alertbar';
-    a.innerHTML = `The HGL has fallen <b>below the pipe</b>. Gravity cannot deliver ${S.qTotal} L/s through DN${DN} at k = ${KS} mm — upsize the main or reduce the flow.`;
+    a.innerHTML = `The HGL has fallen <b>below the pipe</b>. DN${DN} at k = ${KS} mm cannot carry this — upsize the main, cut the draw, or run the pump.`;
   } else if (!worst.ok){
     a.className = 'alertbar';
     a.innerHTML = `<b>${worst.name}</b> is down to ${worst.residual.toFixed(1)} m (${Math.round(worst.kpa)} kPa) — below the ${MINRES} m minimum.`;
@@ -1006,35 +1000,8 @@ function updatePanel(S){
   }
 
   el('capacity').innerHTML =
-    `Holding ${MINRES} m at every offtake, this demand pattern can rise to <b>${S.cap.q.toFixed(0)} L/s</b> total ` +
-    `on DN${DN} at k = ${KS} mm. The governing point is <b>${S.cap.gov}</b> — note it is not always the far end of the main.`;
-
-  const P = S.pump;
-  el('puLift').innerHTML = `${P.lift.toFixed(1)}<i>m</i>`;
-  el('puHf').innerHTML   = `${P.hf.toFixed(2)}<i>m</i>`;
-  el('puTdh').innerHTML  = `${P.tdh.toFixed(1)}<i>m</i>`;
-  el('puV').innerHTML    = `${P.v.toFixed(2)}<i>m/s</i>`;
-  el('puKw').innerHTML   = `${P.kw.toFixed(0)}<i>kW</i>`;
-  el('puKwh').innerHTML  = P.q > 0 ? `${P.kwhML.toFixed(0)}<i>kWh/ML</i>` : '—';
-
-  const bal = el('balance');
-  const net = P.q - S.qTotal;
-  if (P.q === 0 && S.qTotal === 0){
-    bal.className = 'alertbar clear';
-    bal.innerHTML = `Pump idle, no demand. Static lift from Lake Wombat to Cloud 9 is <b>${P.lift.toFixed(1)} m</b>.`;
-  } else if (P.q === 0){
-    bal.className = 'alertbar';
-    bal.innerHTML = `Pump is off while the town draws <b>${S.qTotal} L/s</b> — Cloud 9 is emptying.`;
-  } else if (P.v > 3){
-    bal.className = 'alertbar';
-    bal.innerHTML = `Rising main velocity is <b>${P.v.toFixed(2)} m/s</b> — far too fast for DN${DN}. Upsize the main or ease the pump back.`;
-  } else if (net < 0){
-    bal.className = 'alertbar';
-    bal.innerHTML = `Pumping <b>${P.q} L/s</b> against a draw of <b>${S.qTotal} L/s</b> — Cloud 9 falls by <b>${Math.abs(net)} L/s</b>.`;
-  } else {
-    bal.className = 'alertbar clear';
-    bal.innerHTML = `Pumping <b>${P.q} L/s</b> against a draw of <b>${S.qTotal} L/s</b> — Cloud 9 gains <b>${net} L/s</b>.`;
-  }
+    `With the pump off, this demand pattern can rise to <b>${S.cap.q.toFixed(0)} L/s</b> total on DN${DN} at k = ${KS} mm ` +
+    `before <b>${S.cap.gov}</b> drops to ${MINRES} m. Running the pump lifts the grade line from the far end and buys more.`;
 }
 
 function update(){
@@ -1051,6 +1018,7 @@ DEMAND.forEach((d,i)=>{
   el('q'+i).addEventListener('input', e=>{ DEMAND[i] = +e.target.value; update(); });
 });
 el('qp').addEventListener('input', e=>{ QP = +e.target.value; update(); });
+
 function segment(id, attr, setter){
   el(id).addEventListener('click', e=>{
     const b = e.target.closest('button'); if (!b) return;
@@ -1076,18 +1044,18 @@ el('reset').addEventListener('click', ()=>{
 
 let sweeping = null;
 el('sweep').addEventListener('click', ()=>{
-  if (sweeping){ cancelAnimationFrame(sweeping); sweeping=null; el('sweep').textContent='Sweep flow'; return; }
+  if (sweeping){ cancelAnimationFrame(sweeping); sweeping=null; el('sweep').textContent='Sweep pump'; return; }
   el('sweep').textContent = 'Stop';
-  const t0 = performance.now(), dur = 7000;
+  DEMAND = PEAK.slice();
+  DEMAND.forEach((d,i)=>{ el('q'+i).value = d; });
+  const t0 = performance.now(), dur = 9000;
   const step = t => {
     const k = Math.min(1, (t-t0)/dur);
-    DEMAND = PEAK.map(p=>Math.round(k*p));
-    DEMAND.forEach((d,i)=>{ el('q'+i).value = d; });
-    QP = Math.round(k*100);
+    QP = Math.round(k*140);
     el('qp').value = QP;
     update();
     if (k < 1) sweeping = requestAnimationFrame(step);
-    else { sweeping = null; el('sweep').textContent = 'Sweep flow'; }
+    else { sweeping = null; el('sweep').textContent = 'Sweep pump'; }
   };
   sweeping = requestAnimationFrame(step);
 });

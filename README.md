@@ -1,11 +1,11 @@
 # Cloud 9 Water Supply - Hydraulic Grade Line
 
-Two interactive teaching sheets for water supply engineering: a gravity main feeding three offtakes, and a pumped rising main refilling the reservoir that feeds it.
+Two interactive teaching sheets for water supply engineering: a gravity main feeding three offtakes, and the same scheme on a single common main where a pump at the far end can reverse the flow.
 
 | Sheet | Live |
 | --- | --- |
 | 01 - Gravity main, Cloud 9 Reservoir to Snow Town | https://josephllin.github.io/HGL-demo/ |
-| 02 - Pumped main, Lake Wombat TP back to Cloud 9 | https://josephllin.github.io/HGL-demo/pumped-main.html |
+| 02 - Pumped main, one common pipe with reversing flow | https://josephllin.github.io/HGL-demo/pumped-main.html |
 
 ## Sheet 01 - Gravity main
 
@@ -37,19 +37,33 @@ Sweep flow ramps all three demands together, from zero up to a 30 / 25 / 45 L/s 
 
 ## Sheet 02 - Pumped main
 
-The corridor continues past Snow Town to the Lake Wombat Treatment Plant at ch 6000, surface 20.0 m AHD. A pump station there lifts treated water the full 6,000 m back to Cloud 9 Reservoir through a separate rising main, with its own flow slider.
+Sheet 02 puts the whole scheme on one pipe. The corridor continues past Snow Town to the Lake Wombat Treatment Plant at ch 6000, surface 20.0 m AHD, and a pump station there injects flow back into the same main that feeds the three offtakes. There is no second pipe.
 
-Because the reservoir sits at 120.00 m AHD and the plant at 20.00 m AHD, the pump carries a static lift of 100.00 m before a single metre of friction. The rising main grade line therefore sits above TWL and falls toward the reservoir in the direction of flow, which is the mirror image of the gravity main below it.
+Cloud 9 Reservoir is a fixed-head boundary at TWL 120.00; the pump is a fixed-flow boundary at ch 6000. With one reservoir and one pump on a branchless line, continuity alone fixes the flow in every reach: each reach carries the sum of everything still drawn downstream of it, less the pump flow. Head falls in whichever direction the water actually travels, so a reversed reach has a grade line that rises with chainage.
+
+Raising pump flow reverses the main from the far end backwards. At 100 L/s of town demand on DN300 at k = 0.06 mm:
+
+| Pump | Reach 1 | Reach 2 | Reach 3 | Reach 4 | Falls Creek | Mt Hotham | Snow Town |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0 L/s | 100 out | 70 out | 45 out | dead | 27.4 m | 25.9 m | 60.2 m |
+| 60 L/s | 40 out | 10 out | 15 back | 60 back | 34.4 m | 38.3 m | 74.5 m |
+| 100 L/s | dead | 30 back | 55 back | 100 back | 36.0 m | 41.1 m | 79.6 m |
+| 140 L/s | 40 back | 70 back | 95 back | 140 back | 37.6 m | 47.1 m | 89.9 m |
+
+At 100 L/s the pump exactly covers demand, reach 1 goes dead, and Cloud 9 neither fills nor drains. Past that, surplus runs back into the reservoir and the grade line sits above TWL along the whole main. Every offtake gains pressure as the pump comes up, most of all the ones nearest it.
+
+Reaches are coloured by direction in both the long section and the 3D grade surface: teal for flow running away from Cloud 9, violet for flow running back toward it, with matching arrows on the pipe.
 
 | Readout | Meaning |
 | --- | --- |
 | Static lift | TWL minus the plant water level, fixed at 100.00 m |
-| Friction head | Loss over the full 6,000 m at the selected pump flow |
-| Total dynamic head | What the pump actually has to generate |
+| Pump head required | The grade line the pump must hold at ch 6000, above the plant water level |
+| Friction in main | Total loss summed over all four reaches |
+| Velocity at pump | Velocity in the reach leaving the plant |
 | Shaft power | Hydraulic power at 75 % combined pump and motor efficiency |
 | Specific energy | kWh per megalitre delivered |
 
-A balance line compares pump flow against total town demand, so you can see at a glance whether Cloud 9 is filling or emptying. Worked example: 100 L/s on DN300 at k = 0.06 mm gives 32.4 m of friction, 132.4 m total dynamic head, 173 kW and 481 kWh/ML.
+A balance line under the reach table says in words what is happening: how much Cloud 9 is still supplying, how many reaches have reversed, or how much is running back into storage. With the pump off, Sheet 02 reproduces Sheet 01 exactly, which is the check that the two models agree.
 
 ## Design basis
 
